@@ -32,6 +32,11 @@ typedef void(^SIActionSheetHandler)(SIActionSheet *actionSheet);
 @property (nonatomic, copy) SIActionSheetHandler willDismissHandler;
 @property (nonatomic, copy) SIActionSheetHandler didDismissHandler;
 
+@property (nonatomic, strong) UIColor *titleColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIFont *titleFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIFont *buttonFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, assign) CGFloat shadowOpacity NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is 0.5
+
 - (id)initWithTitle:(NSString *)title;
 - (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
 

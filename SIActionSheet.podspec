@@ -12,6 +12,7 @@ Pod::Spec.new do |s|
   s.description = 'An SIActionSheet replacement with block syntax.'
 
   s.requires_arc = true
+  s.framework    = 'QuartzCore'
   s.source_files = 'SIActionSheet/*.{h,m}'
   s.resources    = 'SIActionSheet/SIActionSheet.bundle'
 end

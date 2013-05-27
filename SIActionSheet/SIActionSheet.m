@@ -7,6 +7,7 @@
 //
 
 #import "SIActionSheet.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define HEADER_HEIGHT 40
 #define ROW_HEIGHT 54
@@ -67,6 +68,18 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 @implementation SIActionSheet
 
++ (void)initialize
+{
+    if (self != [SIActionSheet class])
+        return;
+    
+    SIActionSheet *appearance = [self appearance];
+    appearance.titleColor = [UIColor grayColor];
+    appearance.titleFont = [UIFont systemFontOfSize:16];
+    appearance.buttonFont = [UIFont systemFontOfSize:[UIFont buttonFontSize]];
+    appearance.shadowOpacity = 0.5;
+}
+
 - (id)init
 {
 	return [self initWithTitle:nil];
@@ -86,6 +99,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 {
     CGFloat height = [self preferHeight];
     self.containerView.frame = CGRectMake(0, self.bounds.size.height - height, self.bounds.size.width, height);
+    self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
 	if (self.titleLabel) {
 		self.titleLabel.frame = CGRectMake(0, 0, self.containerView.bounds.size.width, HEADER_HEIGHT);
 		self.tableView.frame = CGRectMake(0, HEADER_HEIGHT, self.containerView.bounds.size.width, self.containerView.bounds.size.height - HEADER_HEIGHT);
@@ -187,6 +201,10 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     [self.backgroundView addGestureRecognizer:tap];
     
     self.containerView = [[UIView alloc] initWithFrame:self.bounds];
+    self.containerView.layer.shadowOpacity = self.shadowOpacity;
+    self.containerView.layer.shadowRadius = 3;
+    self.containerView.layer.shadowOffset = CGSizeZero;
+    self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
     [self addSubview:self.containerView];
     
 	self.tableView = [[UITableView alloc] initWithFrame:self.bounds];
@@ -207,8 +225,8 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 			self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
 			self.titleLabel.textAlignment = NSTextAlignmentCenter;
 			self.titleLabel.text = self.title;
-			self.titleLabel.textColor = [UIColor grayColor];
-            //			self.titleLabel.font = GD_ACTIONSHEET_TITLE_FONT;
+			self.titleLabel.textColor = self.titleColor;
+			self.titleLabel.font = self.titleFont;
 			[self.containerView addSubview:self.titleLabel];
 		}
 		self.titleLabel.text = self.title;
@@ -253,7 +271,9 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 	button.tag = indexPath.row;
 	button.frame = CGRectMake(10, (ROW_HEIGHT - 44) / 2, cell.contentView.bounds.size.width - 20, 44);
 	button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-    //	button.titleLabel.font = GD_ACTIONSHEET_BUTTON_FONT;
+	button.titleLabel.font = self.buttonFont;
+    button.titleLabel.adjustsFontSizeToFitWidth = YES;
+    button.titleLabel.minimumScaleFactor = 0.5;
 	[button setTitle:item.title forState:UIControlStateNormal];
 	UIImage *normalImage = nil;
 	UIImage *highlightedImage = nil;
@@ -304,6 +324,47 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     if (self.tapBackgroundToDismissEnabled) {
         [self dismissAnimated:YES];
     }
+}
+
+#pragma mark - UIAppearance setters
+
+- (void)setTitleFont:(UIFont *)titleFont
+{
+    if (_titleFont == titleFont) {
+        return;
+    }
+    _titleFont = titleFont;
+    self.titleLabel.font = titleFont;
+}
+
+- (void)setTitleColor:(UIColor *)titleColor
+{
+    if (_titleColor == titleColor) {
+        return;
+    }
+    _titleColor = titleColor;
+    self.titleLabel.textColor = titleColor;
+}
+
+- (void)setButtonFont:(UIFont *)buttonFont
+{
+    if (_buttonFont == buttonFont) {
+        return;
+    }
+    _buttonFont = buttonFont;
+    for (UITableViewCell *cell in self.tableView.visibleCells) {
+        UIButton *button = cell.contentView.subviews[0];
+        button.titleLabel.font = self.buttonFont;
+    }
+}
+
+- (void)setShadowOpacity:(CGFloat)shadowOpacity
+{
+    if (_shadowOpacity == shadowOpacity) {
+        return;
+    }
+    _shadowOpacity = shadowOpacity;
+    self.containerView.layer.shadowOpacity = shadowOpacity;
 }
 
 @end

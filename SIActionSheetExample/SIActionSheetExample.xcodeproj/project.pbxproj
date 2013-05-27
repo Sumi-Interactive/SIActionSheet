@@ -25,6 +25,7 @@
 		7EC33FDC1752057E00CF4BAA /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDB1752057E00CF4BAA /* Icon@2x.png */; };
 		7EC33FDE1752058500CF4BAA /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDD1752058500CF4BAA /* Icon-72.png */; };
 		7EC33FE01752058800CF4BAA /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDF1752058800CF4BAA /* Icon-72@2x.png */; };
+		7EC33FE517534D0000CF4BAA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FE417534D0000CF4BAA /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		7EC33FDB1752057E00CF4BAA /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		7EC33FDD1752058500CF4BAA /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		7EC33FDF1752058800CF4BAA /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
+		7EC33FE417534D0000CF4BAA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7EC33FE517534D0000CF4BAA /* QuartzCore.framework in Frameworks */,
 				7EC33FAE1752051000CF4BAA /* UIKit.framework in Frameworks */,
 				7EC33FB01752051000CF4BAA /* Foundation.framework in Frameworks */,
 				7EC33FB21752051000CF4BAA /* CoreGraphics.framework in Frameworks */,
@@ -89,6 +92,7 @@
 		7EC33FAC1752051000CF4BAA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7EC33FE417534D0000CF4BAA /* QuartzCore.framework */,
 				7EC33FAD1752051000CF4BAA /* UIKit.framework */,
 				7EC33FAF1752051000CF4BAA /* Foundation.framework */,
 				7EC33FB11752051000CF4BAA /* CoreGraphics.framework */,
@@ -372,6 +376,7 @@
 				7EC33FD21752051100CF4BAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

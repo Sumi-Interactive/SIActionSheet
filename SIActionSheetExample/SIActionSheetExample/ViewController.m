@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "SIActionSheet.h"
 
+#define TEST_APPEARANCE 0
+
 @interface ViewController ()
 
 @end
@@ -18,7 +20,12 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+#if TEST_APPEARANCE
+    [[SIActionSheet appearance] setTitleFont:[UIFont boldSystemFontOfSize:18]];
+    [[SIActionSheet appearance] setTitleColor:[UIColor redColor]];
+    [[SIActionSheet appearance] setButtonFont:[UIFont fontWithName:@"AmericanTypewriter" size:17]];
+    [[SIActionSheet appearance] setShadowOpacity:1];
+#endif
 }
 
 - (void)didReceiveMemoryWarning
@@ -32,6 +39,7 @@
     SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithTitle:@"Sumi"];
     [actionSheet addButtonWithTitle:@"Button1" type:SIActionSheetButtonTypeDefault handler:^(SIActionSheet *actionSheet) {
         NSLog(@"%@", actionSheet);
+        [self show2:nil];
     }];
     [actionSheet addButtonWithTitle:@"Button2" type:SIActionSheetButtonTypeDestructive handler:^(SIActionSheet *actionSheet) {
         NSLog(@"%@", actionSheet);
@@ -53,12 +61,21 @@
     };
     actionSheet.tapBackgroundToDismissEnabled = YES;
     [actionSheet show];
-    
-    SIActionSheet *actionSheet2 = [[SIActionSheet alloc] initWithTitle:@"Sumi2"];
-    [actionSheet2 addButtonWithTitle:@"Button1" type:SIActionSheetButtonTypeDefault handler:^(SIActionSheet *actionSheet) {
+}
+
+- (IBAction)show2:(id)sender
+{
+    SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithTitle:@"Sumi2"];
+    [actionSheet addButtonWithTitle:@"A Very Very Very Very Very Long Title Button1" type:SIActionSheetButtonTypeDefault handler:^(SIActionSheet *actionSheet) {
         NSLog(@"%@", actionSheet);
     }];
-    [actionSheet2 show];
+    [actionSheet addButtonWithTitle:@"Button2" type:SIActionSheetButtonTypeCancel handler:^(SIActionSheet *actionSheet) {
+        NSLog(@"%@", actionSheet);
+    }];
+    [actionSheet show];
+    actionSheet.titleColor = [UIColor redColor];
+    actionSheet.buttonFont = [UIFont fontWithName:@"AmericanTypewriter" size:17];
 }
+
 
 @end
