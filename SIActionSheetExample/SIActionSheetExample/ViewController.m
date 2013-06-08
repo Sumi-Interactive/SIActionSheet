@@ -25,6 +25,7 @@
     [[SIActionSheet appearance] setTitleColor:[UIColor redColor]];
     [[SIActionSheet appearance] setButtonFont:[UIFont fontWithName:@"AmericanTypewriter" size:17]];
     [[SIActionSheet appearance] setShadowOpacity:1];
+    [[SIActionSheet appearance] setViewBackgroundColor:[UIColor lightGrayColor]];
 #endif
 }
 
@@ -61,11 +62,18 @@
     };
     actionSheet.tapBackgroundToDismissEnabled = YES;
     [actionSheet show];
+    
+    double delayInSeconds = 1.0;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        actionSheet.title = @"NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. ";
+        actionSheet.titleFont = [UIFont systemFontOfSize:14];
+    });
 }
 
 - (IBAction)show2:(id)sender
 {
-    SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithTitle:@"Sumi2"];
+    SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithTitle:@"NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. NOTE: iCloud preference will overwrite local preference. The passcode will not be synced."];
     [actionSheet addButtonWithTitle:@"A Very Very Very Very Very Long Title Button1" type:SIActionSheetButtonTypeDefault handler:^(SIActionSheet *actionSheet) {
         NSLog(@"%@", actionSheet);
     }];

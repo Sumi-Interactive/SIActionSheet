@@ -32,6 +32,7 @@ typedef void(^SIActionSheetHandler)(SIActionSheet *actionSheet);
 @property (nonatomic, copy) SIActionSheetHandler willDismissHandler;
 @property (nonatomic, copy) SIActionSheetHandler didDismissHandler;
 
+@property (nonatomic, strong) UIColor *viewBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIColor *titleColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIFont *titleFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIFont *buttonFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;

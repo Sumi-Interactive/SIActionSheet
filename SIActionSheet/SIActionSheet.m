@@ -12,6 +12,10 @@
 #define HEADER_HEIGHT 40
 #define ROW_HEIGHT 54
 #define VERTICAL_INSET 8
+#define HORIZONTAL_PADDING 10
+#define PADDING_TOP 10
+#define GAP 12
+#define TITLE_LINES_MAX 5
 
 NSString *const SIActionSheetWillShowNotification = @"SIActionSheetWillShowNotification";
 NSString *const SIActionSheetDidShowNotification = @"SIActionSheetDidShowNotification";
@@ -74,6 +78,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
         return;
     
     SIActionSheet *appearance = [self appearance];
+    appearance.viewBackgroundColor = [UIColor whiteColor];
     appearance.titleColor = [UIColor grayColor];
     appearance.titleFont = [UIFont systemFontOfSize:16];
     appearance.buttonFont = [UIFont systemFontOfSize:[UIFont buttonFontSize]];
@@ -101,8 +106,9 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     self.containerView.frame = CGRectMake(0, self.bounds.size.height - height, self.bounds.size.width, height);
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
 	if (self.titleLabel) {
-		self.titleLabel.frame = CGRectMake(0, 0, self.containerView.bounds.size.width, HEADER_HEIGHT);
-		self.tableView.frame = CGRectMake(0, HEADER_HEIGHT, self.containerView.bounds.size.width, self.containerView.bounds.size.height - HEADER_HEIGHT);
+		self.titleLabel.frame = CGRectMake(HORIZONTAL_PADDING, PADDING_TOP, self.containerView.bounds.size.width - HORIZONTAL_PADDING * 2, [self heightForTitleLabel]);
+        CGFloat y = PADDING_TOP + self.titleLabel.frame.size.height + GAP;
+		self.tableView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, self.containerView.bounds.size.height - y);
 	} else {
 		self.tableView.frame = self.containerView.bounds;
 	}
@@ -205,6 +211,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     self.containerView.layer.shadowRadius = 3;
     self.containerView.layer.shadowOffset = CGSizeZero;
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
+    self.containerView.backgroundColor = self.viewBackgroundColor;
     [self addSubview:self.containerView];
     
 	self.tableView = [[UITableView alloc] initWithFrame:self.bounds];
@@ -214,6 +221,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 	self.tableView.rowHeight = ROW_HEIGHT;
 	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
 	self.tableView.contentInset = UIEdgeInsetsMake(VERTICAL_INSET, 0, VERTICAL_INSET, 0);
+    self.tableView.backgroundColor = [UIColor clearColor];
 	
 	[self updateTitleLabel];
 }
@@ -227,6 +235,8 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 			self.titleLabel.text = self.title;
 			self.titleLabel.textColor = self.titleColor;
 			self.titleLabel.font = self.titleFont;
+            self.titleLabel.backgroundColor = [UIColor clearColor];
+            self.titleLabel.numberOfLines = TITLE_LINES_MAX;
 			[self.containerView addSubview:self.titleLabel];
 		}
 		self.titleLabel.text = self.title;
@@ -241,9 +251,15 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 {
 	CGFloat height = self.items.count * ROW_HEIGHT + VERTICAL_INSET * 2;
 	if (self.title) {
-		height += HEADER_HEIGHT;
+		height += PADDING_TOP + GAP + [self heightForTitleLabel];
 	}
 	return height;
+}
+
+- (CGFloat)heightForTitleLabel
+{
+    CGSize size = [self.title sizeWithFont:self.titleFont constrainedToSize:CGSizeMake(self.bounds.size.width - HORIZONTAL_PADDING * 2, self.titleFont.lineHeight * TITLE_LINES_MAX)];
+    return size.height;
 }
 
 #pragma mark - Table view data source
@@ -269,7 +285,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 	SIActionSheetItem *item = self.items[indexPath.row];
 	UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
 	button.tag = indexPath.row;
-	button.frame = CGRectMake(10, (ROW_HEIGHT - 44) / 2, cell.contentView.bounds.size.width - 20, 44);
+	button.frame = CGRectMake(HORIZONTAL_PADDING, (ROW_HEIGHT - 44) / 2, cell.contentView.bounds.size.width - HORIZONTAL_PADDING * 2, 44);
 	button.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	button.titleLabel.font = self.buttonFont;
     button.titleLabel.adjustsFontSizeToFitWidth = YES;
@@ -327,6 +343,16 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 }
 
 #pragma mark - UIAppearance setters
+
+- (void)setViewBackgroundColor:(UIColor *)viewBackgroundColor
+{
+    if (_viewBackgroundColor == viewBackgroundColor) {
+        return;
+    }
+    _viewBackgroundColor = viewBackgroundColor;
+    self.containerView.backgroundColor = viewBackgroundColor;
+//    self.tableView.backgroundColor = viewBackgroundColor;
+}
 
 - (void)setTitleFont:(UIFont *)titleFont
 {
