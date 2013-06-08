@@ -60,7 +60,7 @@
     actionSheet.didDismissHandler = ^(SIActionSheet *actionSheet) {
         NSLog(@"didDismissHandler");
     };
-    actionSheet.tapBackgroundToDismissEnabled = YES;
+    actionSheet.allowTapBackgroundToDismiss = YES;
     [actionSheet show];
     
     double delayInSeconds = 1.0;

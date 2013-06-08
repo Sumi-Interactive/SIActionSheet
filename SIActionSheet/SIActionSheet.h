@@ -25,7 +25,7 @@ typedef void(^SIActionSheetHandler)(SIActionSheet *actionSheet);
 @interface SIActionSheet : UIView
 
 @property (nonatomic, copy) NSString *title;
-@property (nonatomic, assign, getter = isTapBackgroundToDismissEnabled) BOOL tapBackgroundToDismissEnabled;
+@property (nonatomic, assign) BOOL allowTapBackgroundToDismiss;
 
 @property (nonatomic, copy) SIActionSheetHandler willShowHandler;
 @property (nonatomic, copy) SIActionSheetHandler didShowHandler;

@@ -337,7 +337,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 - (void)tapHandler:(UIGestureRecognizer *)recognizer
 {
-    if (self.tapBackgroundToDismissEnabled) {
+    if (self.allowTapBackgroundToDismiss) {
         [self dismissAnimated:YES];
     }
 }
@@ -351,7 +351,6 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     }
     _viewBackgroundColor = viewBackgroundColor;
     self.containerView.backgroundColor = viewBackgroundColor;
-//    self.tableView.backgroundColor = viewBackgroundColor;
 }
 
 - (void)setTitleFont:(UIFont *)titleFont
