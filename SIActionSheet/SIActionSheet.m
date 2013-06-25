@@ -145,7 +145,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     window.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     window.opaque = NO;
-    window.windowLevel = UIWindowLevelAlert;
+    window.windowLevel = UIWindowLevelStatusBar + [UIApplication sharedApplication].windows.count;
     window.rootViewController = viewController;
     self.actionsheetWindow = window;
     
