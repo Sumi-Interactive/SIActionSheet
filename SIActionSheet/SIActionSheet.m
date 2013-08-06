@@ -22,7 +22,9 @@ NSString *const SIActionSheetDidShowNotification = @"SIActionSheetDidShowNotific
 NSString *const SIActionSheetWillDismissNotification = @"SIActionSheetWillDismissNotification";
 NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissNotification";
 
-@interface SIActionSheet () <UITableViewDataSource>
+NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIActionSheetDismissNotificationUserInfoButtonIndexKey";
+
+@interface SIActionSheet () <UITableViewDataSource, UIPopoverControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic, strong) UIView *backgroundView;
@@ -31,9 +33,8 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 @property (nonatomic, strong) UITableView *tableView;
 
 @property (nonatomic, strong) UIWindow *actionsheetWindow;
-@property (nonatomic, assign, getter = isVisible) BOOL visible;
-
-- (void)setup;
+@property (nonatomic, strong) UIWindow *oldKeyWindow;
+@property (nonatomic, strong) UIPopoverController *popoverController;
 
 @end
 
@@ -41,7 +42,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, assign) SIActionSheetButtonType type;
-@property (nonatomic, copy) SIActionSheetHandler action;
+@property (nonatomic, copy) SIActionSheetShowHandler action;
 
 @end
 
@@ -60,12 +61,6 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 - (void)loadView
 {
     self.view = self.actionSheet;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	[self.actionSheet setup];
 }
 
 @end
@@ -95,14 +90,14 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 	self = [super init];
 	if (self) {
 		_title = title;
-		self.items = [[NSMutableArray alloc] init];
+		self.items = [NSMutableArray array];
 	}
 	return self;
 }
 
 - (void)layoutSubviews
 {
-    CGFloat height = [self preferHeight];
+    CGFloat height = MIN([self preferHeight], self.bounds.size.height);
     self.containerView.frame = CGRectMake(0, self.bounds.size.height - height, self.bounds.size.width, height);
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
 	if (self.titleLabel) {
@@ -117,13 +112,24 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 #pragma mark - Public
 
-- (void)setTitle:(NSString *)title
+- (BOOL)isVisible
 {
-	_title = title;
-	[self updateTitleLabel];
+    if (self.actionsheetWindow || self.popoverController) {
+        return YES;
+    }
+    return NO;
 }
 
-- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler
+- (void)setTitle:(NSString *)title
+{
+    if (_title != title) {
+        _title = title;
+        [self setupTitleLabel];
+        [self setNeedsLayout];
+    }
+}
+
+- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetShowHandler)handler
 {
 	SIActionSheetItem *item = [[SIActionSheetItem alloc] init];
 	item.title = title;
@@ -134,13 +140,16 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 - (void)show
 {
+    if (self.isVisible) {
+        return;
+    }
+    
     if (self.willShowHandler) {
         self.willShowHandler(self);
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillShowNotification object:self userInfo:nil];
     
-    SIActionSheetViewController *viewController = [[SIActionSheetViewController alloc] initWithNibName:nil bundle:nil];
-    viewController.actionSheet = self;
+    SIActionSheetViewController *viewController = [self actionSheetViewController];
     
     UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     window.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -149,6 +158,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     window.rootViewController = viewController;
     self.actionsheetWindow = window;
     
+    self.oldKeyWindow = [UIApplication sharedApplication].keyWindow;
     [self.actionsheetWindow makeKeyAndVisible];
     
     self.backgroundView.alpha = 0;
@@ -169,34 +179,106 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
                      }];
 }
 
-- (void)dismissAnimated:(BOOL)animated
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view
 {
-    if (self.willDismissHandler) {
-        self.willDismissHandler(self);
+    if (self.isVisible) {
+        return;
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillDismissNotification object:self userInfo:nil];
     
-    CGRect targetRect = self.containerView.frame;
-    targetRect.origin.y += targetRect.size.height;
-    [UIView animateWithDuration:0.3
-                     animations:^{
-                         self.backgroundView.alpha = 0;
-                         self.containerView.frame = targetRect;
-                     }
-                     completion:^(BOOL finished) {
-                         if (self.didDismissHandler) {
-                             self.didDismissHandler(self);
-                         }
-                         [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidDismissNotification object:self userInfo:nil];
-                         
-                         [self.actionsheetWindow removeFromSuperview];
-                         self.actionsheetWindow = nil;
-                     }];
+    if (self.willShowHandler) {
+        self.willShowHandler(self);
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillShowNotification object:self userInfo:nil];
+    
+    SIActionSheetViewController *viewController = [self actionSheetViewController];
+    self.popoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
+    self.popoverController.delegate = self;
+    [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    viewController.contentSizeForViewInPopover = CGSizeMake(320.0, [self preferHeight]);
+    
+    if (self.didShowHandler) {
+        self.didShowHandler(self);
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidShowNotification object:self userInfo:nil];
+}
+
+- (void)dismissWithButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated
+{
+    [self dismissWithButtonIndex:buttonIndex animated:animated notifyDelegate:NO];
+}
+
+- (void)dismissWithButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated notifyDelegate:(BOOL)notifyFlag
+{
+    if (!self.isVisible) {
+        return;
+    }
+    
+    NSDictionary *userInfo = @{SIActionSheetDismissNotificationUserInfoButtonIndexKey : @(buttonIndex)};
+    
+    if (notifyFlag) {
+        if (self.willDismissHandler) {
+            self.willDismissHandler(self, buttonIndex);
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillDismissNotification object:self userInfo:userInfo];
+    }
+    
+    if (self.actionsheetWindow) {
+        void (^dismissCompletion)(void) = ^{
+            if (notifyFlag) {
+                if (self.didDismissHandler) {
+                    self.didDismissHandler(self, buttonIndex);
+                }
+                [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidDismissNotification object:self userInfo:userInfo];
+            }
+            
+            [self.actionsheetWindow removeFromSuperview];
+            self.actionsheetWindow = nil;
+            
+            [self.oldKeyWindow makeKeyWindow];
+            self.oldKeyWindow = nil;
+        };
+        
+        if (animated) {
+            CGRect targetRect = self.containerView.frame;
+            targetRect.origin.y += targetRect.size.height;
+            [UIView animateWithDuration:0.3
+                             animations:^{
+                                 self.backgroundView.alpha = 0;
+                                 self.containerView.frame = targetRect;
+                             }
+                             completion:^(BOOL finished) {
+                                 dismissCompletion();
+                             }];
+        } else {
+            dismissCompletion();
+        }
+        
+    } else {
+        if (self.popoverController) {
+            [self.popoverController dismissPopoverAnimated:animated];
+            self.popoverController = nil;
+        }
+        
+        if (notifyFlag) {
+            if (self.didDismissHandler) {
+                self.didDismissHandler(self, buttonIndex);
+            }
+            [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidDismissNotification object:self userInfo:userInfo];
+        }
+    }
 }
 
 #pragma mark - Private
 
-- (void)setup
+- (SIActionSheetViewController *)actionSheetViewController
+{
+    SIActionSheetViewController *viewController = [[SIActionSheetViewController alloc] initWithNibName:nil bundle:nil];
+    viewController.actionSheet = self;
+    [self setupViews];
+    return viewController;
+}
+
+- (void)setupViews
 {
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
@@ -223,10 +305,10 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 	self.tableView.contentInset = UIEdgeInsetsMake(VERTICAL_INSET, 0, VERTICAL_INSET, 0);
     self.tableView.backgroundColor = [UIColor clearColor];
 	
-	[self updateTitleLabel];
+	[self setupTitleLabel];
 }
 
-- (void)updateTitleLabel
+- (void)setupTitleLabel
 {
 	if (self.title) {
 		if (!self.titleLabel) {
@@ -244,7 +326,6 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 		[self.titleLabel removeFromSuperview];
 		self.titleLabel = nil;
 	}
-	[self setNeedsLayout];
 }
 
 - (CGFloat)preferHeight
@@ -324,6 +405,18 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
     return cell;
 }
 
+#pragma mark - UIPopoverControllerDelegate
+
+- (BOOL)popoverControllerShouldDismissPopover:(UIPopoverController *)popoverController
+{
+    return self.allowTapBackgroundToDismiss;
+}
+
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    [self dismissWithButtonIndex:-1 animated:NO notifyDelegate:YES];
+}
+
 #pragma mark - Actions
 
 - (void)buttonAction:(UIButton *)button
@@ -332,13 +425,13 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 	if (item.action) {
 		item.action(self);
 	}
-	[self dismissAnimated:YES];
+	[self dismissWithButtonIndex:button.tag animated:YES notifyDelegate:YES];
 }
 
 - (void)tapHandler:(UIGestureRecognizer *)recognizer
 {
     if (self.allowTapBackgroundToDismiss) {
-        [self dismissAnimated:YES];
+        [self dismissWithButtonIndex:-1 animated:YES notifyDelegate:YES];
     }
 }
 

@@ -13,6 +13,8 @@ extern NSString *const SIActionSheetDidShowNotification;
 extern NSString *const SIActionSheetWillDismissNotification;
 extern NSString *const SIActionSheetDidDismissNotification;
 
+extern NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey;
+
 @class SIActionSheet;
 
 typedef NS_ENUM(NSInteger, SIActionSheetButtonType) {
@@ -20,17 +22,19 @@ typedef NS_ENUM(NSInteger, SIActionSheetButtonType) {
     SIActionSheetButtonTypeDestructive,
     SIActionSheetButtonTypeCancel
 };
-typedef void(^SIActionSheetHandler)(SIActionSheet *actionSheet);
+typedef void(^SIActionSheetShowHandler)(SIActionSheet *actionSheet);
+typedef void(^SIActionSheetDismissHandler)(SIActionSheet *actionSheet, NSInteger buttonIndex);
 
 @interface SIActionSheet : UIView
 
 @property (nonatomic, copy) NSString *title;
 @property (nonatomic, assign) BOOL allowTapBackgroundToDismiss;
+@property (nonatomic, assign, getter = isVisible) BOOL visible;
 
-@property (nonatomic, copy) SIActionSheetHandler willShowHandler;
-@property (nonatomic, copy) SIActionSheetHandler didShowHandler;
-@property (nonatomic, copy) SIActionSheetHandler willDismissHandler;
-@property (nonatomic, copy) SIActionSheetHandler didDismissHandler;
+@property (nonatomic, copy) SIActionSheetShowHandler willShowHandler;
+@property (nonatomic, copy) SIActionSheetShowHandler didShowHandler;
+@property (nonatomic, copy) SIActionSheetDismissHandler willDismissHandler;
+@property (nonatomic, copy) SIActionSheetDismissHandler didDismissHandler;
 
 @property (nonatomic, strong) UIColor *viewBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 @property (nonatomic, strong) UIColor *titleColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
@@ -39,11 +43,10 @@ typedef void(^SIActionSheetHandler)(SIActionSheet *actionSheet);
 @property (nonatomic, assign) CGFloat shadowOpacity NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is 0.5
 
 - (id)initWithTitle:(NSString *)title;
-- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
+- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetShowHandler)handler;
 
 - (void)show;
-// TODO: iPad support
-//- (void)showFromRect:(CGRect)rect inView:(UIView *)view;
-- (void)dismissAnimated:(BOOL)animated;
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view;
+- (void)dismissWithButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated; // (buttonIndex == -1) means no button is clicked.
 
 @end
