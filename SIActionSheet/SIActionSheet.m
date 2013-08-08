@@ -7,6 +7,7 @@
 //
 
 #import "SIActionSheet.h"
+#import "SIPopoverBackgroundView.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define HEADER_HEIGHT 40
@@ -193,8 +194,14 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     SIActionSheetViewController *viewController = [self actionSheetViewController];
     self.popoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
     self.popoverController.delegate = self;
+    self.popoverController.popoverBackgroundViewClass = [SIPopoverBackgroundView class];
     [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     viewController.contentSizeForViewInPopover = CGSizeMake(320.0, [self preferHeight]);
+    
+    // tweak ui for popover
+    self.backgroundView.hidden = YES;
+    self.containerView.layer.cornerRadius = [[SIPopoverBackgroundView appearance] cornerRadius];
+    self.containerView.layer.shadowOpacity = 0;
     
     if (self.didShowHandler) {
         self.didShowHandler(self);
