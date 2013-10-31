@@ -90,6 +90,9 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 @property (nonatomic, strong) UIWindow *actionsheetWindow;
 @property (nonatomic, strong) UIWindow *oldKeyWindow;
 @property (nonatomic, strong) UIPopoverController *popoverController;
+#ifdef __IPHONE_7_0
+@property (nonatomic, assign) UIViewTintAdjustmentMode oldTintAdjustmentMode;
+#endif
 
 
 - (CGFloat)preferredHeight;
@@ -291,6 +294,11 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     
     self.oldKeyWindow = [UIApplication sharedApplication].keyWindow;
     [self.actionsheetWindow makeKeyAndVisible];
+#ifdef __IPHONE_7_0
+    if ([self.oldKeyWindow respondsToSelector:@selector(tintAdjustmentMode:)]) {
+       self.oldTintAdjustmentMode = self.oldKeyWindow.tintAdjustmentMode;
+    }
+#endif
     
     [self layoutIfNeeded];
     
@@ -303,6 +311,11 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
                      animations:^{
                          self.backgroundView.alpha = 1;
                          self.containerView.frame = targetRect;
+#ifdef __IPHONE_7_0
+                         if ([self.oldKeyWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+                             self.oldKeyWindow.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+                         }
+#endif
                      }
                      completion:^(BOOL finished) {
                          if (self.didShowHandler) {
@@ -386,11 +399,21 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
                              animations:^{
                                  self.backgroundView.alpha = 0;
                                  self.containerView.frame = targetRect;
+#ifdef __IPHONE_7_0
+                                 if ([self.oldKeyWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+                                     self.oldKeyWindow.tintAdjustmentMode = self.oldTintAdjustmentMode;
+                                 }
+#endif
                              }
                              completion:^(BOOL finished) {
                                  dismissCompletion();
                              }];
         } else {
+#ifdef __IPHONE_7_0
+            if ([self.oldKeyWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+                self.oldKeyWindow.tintAdjustmentMode = self.oldTintAdjustmentMode;
+            }
+#endif
             dismissCompletion();
         }
         
