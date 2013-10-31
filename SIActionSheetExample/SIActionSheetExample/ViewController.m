@@ -132,4 +132,9 @@
     NSLog(@"cancel");
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleLightContent;
+}
+
 @end

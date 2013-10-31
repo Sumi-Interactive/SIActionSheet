@@ -25,6 +25,60 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIActionSheetDismissNotificationUserInfoButtonIndexKey";
 
+@interface UIWindow (SIActionSheet_Utils)
+
+- (UIViewController *)currentViewController;
+
+@end
+
+@implementation UIWindow (SIActionSheet_Utils)
+
+- (UIViewController *)currentViewController
+{
+    UIViewController *viewController = self.rootViewController;
+    while (viewController.presentedViewController) {
+        viewController = viewController.presentedViewController;
+    }
+    return viewController;
+}
+
+@end
+
+#ifdef __IPHONE_7_0
+@interface UIWindow (SIActionSheet_StatusBarUtils)
+
+- (UIViewController *)viewControllerForStatusBarStyle;
+- (UIViewController *)viewControllerForStatusBarHidden;
+
+@end
+
+@implementation UIWindow (SIActionSheet_StatusBarUtils)
+
+- (UIViewController *)viewControllerForStatusBarStyle
+{
+    UIViewController *currentViewController = [self currentViewController];
+    
+    if ([currentViewController childViewControllerForStatusBarStyle]) {
+        return [currentViewController childViewControllerForStatusBarStyle];
+    } else {
+        return currentViewController;
+    }
+}
+
+- (UIViewController *)viewControllerForStatusBarHidden
+{
+    UIViewController *currentViewController = [self currentViewController];
+    
+    if ([currentViewController childViewControllerForStatusBarHidden]) {
+        return [currentViewController childViewControllerForStatusBarHidden];
+    } else {
+        return currentViewController;
+    }
+}
+
+@end
+#endif
+
 @interface SIActionSheet () <UITableViewDataSource, UIPopoverControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *items;
@@ -36,6 +90,9 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 @property (nonatomic, strong) UIWindow *actionsheetWindow;
 @property (nonatomic, strong) UIWindow *oldKeyWindow;
 @property (nonatomic, strong) UIPopoverController *popoverController;
+
+
+- (CGFloat)preferredHeight;
 
 @end
 
@@ -64,9 +121,77 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     self.view = self.actionSheet;
 }
 
+#ifdef __IPHONE_7_0
+- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
+        [self setNeedsStatusBarAppearanceUpdate];
+    }
+}
+#endif
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    UIViewController *viewController = [self.actionSheet.oldKeyWindow currentViewController];
+    if (viewController) {
+        return [viewController supportedInterfaceOrientations];
+    }
+    return UIInterfaceOrientationMaskAll;
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    UIViewController *viewController = [self.actionSheet.oldKeyWindow currentViewController];
+    if (viewController) {
+        return [viewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation];
+    }
+    return YES;
+}
+
+- (BOOL)shouldAutorotate
+{
+    UIViewController *viewController = [self.actionSheet.oldKeyWindow currentViewController];
+    if (viewController) {
+        return [viewController shouldAutorotate];
+    }
+    return YES;
+}
+
+#ifdef __IPHONE_7_0
+- (UIStatusBarStyle)preferredStatusBarStyle
+{
+    UIWindow *window = self.actionSheet.oldKeyWindow;
+    if (!window) {
+        window = [UIApplication sharedApplication].windows[0];
+    }
+    return [[window viewControllerForStatusBarStyle] preferredStatusBarStyle];
+}
+
+- (BOOL)prefersStatusBarHidden
+{
+    UIWindow *window = self.actionSheet.oldKeyWindow;
+    if (!window) {
+        window = [UIApplication sharedApplication].windows[0];
+    }
+    return [[window viewControllerForStatusBarHidden] prefersStatusBarHidden];
+}
+#endif
+
+- (CGSize)contentSizeForViewInPopover
+{
+    return [self preferredContentSize];
+}
+
+- (CGSize)preferredContentSize
+{
+    return CGSizeMake(320.0, [self.actionSheet preferredHeight] + 55); // TODO: replace hardcode value
+}
+
 @end
 
 @implementation SIActionSheet
+
+@synthesize viewBackgroundColor = _viewBackgroundColor;
 
 + (void)initialize
 {
@@ -98,7 +223,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)layoutSubviews
 {
-    CGFloat height = MIN([self preferHeight], self.bounds.size.height);
+    CGFloat height = MIN([self preferredHeight], self.bounds.size.height);
     self.containerView.frame = CGRectMake(0, self.bounds.size.height - height, self.bounds.size.width, height);
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
 	if (self.titleLabel) {
@@ -141,6 +266,11 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)show
 {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        NSLog(@"Not support yet, please use showFromRect:inView: instead.");
+        return;
+    }
+    
     if (self.isVisible) {
         return;
     }
@@ -161,6 +291,8 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     
     self.oldKeyWindow = [UIApplication sharedApplication].keyWindow;
     [self.actionsheetWindow makeKeyAndVisible];
+    
+    [self layoutIfNeeded];
     
     self.backgroundView.alpha = 0;
     CGRect targetRect = self.containerView.frame;
@@ -191,12 +323,14 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillShowNotification object:self userInfo:nil];
     
+    [[SIPopoverBackgroundView appearance] setTintColor:self.viewBackgroundColor];
+    
     SIActionSheetViewController *viewController = [self actionSheetViewController];
     self.popoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
     self.popoverController.delegate = self;
     self.popoverController.popoverBackgroundViewClass = [SIPopoverBackgroundView class];
+    
     [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-    viewController.contentSizeForViewInPopover = CGSizeMake(320.0, [self preferHeight]);
     
     // tweak ui for popover
     self.backgroundView.hidden = YES;
@@ -289,18 +423,24 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
     self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	
-    self.backgroundView = [[UIView alloc] initWithFrame:self.bounds];
-    self.backgroundView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
-    [self addSubview:self.backgroundView];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandler:)];
-    [self.backgroundView addGestureRecognizer:tap];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        self.backgroundView = [[UIView alloc] initWithFrame:self.bounds];
+        self.backgroundView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
+        [self addSubview:self.backgroundView];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapHandler:)];
+        [self.backgroundView addGestureRecognizer:tap];
+    }
     
     self.containerView = [[UIView alloc] initWithFrame:self.bounds];
     self.containerView.layer.shadowOpacity = self.shadowOpacity;
     self.containerView.layer.shadowRadius = 3;
     self.containerView.layer.shadowOffset = CGSizeZero;
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
-    self.containerView.backgroundColor = self.viewBackgroundColor;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        self.containerView.backgroundColor = [UIColor clearColor];
+    } else {
+        self.containerView.backgroundColor = self.viewBackgroundColor;
+    }
     [self addSubview:self.containerView];
     
 	self.tableView = [[UITableView alloc] initWithFrame:self.bounds];
@@ -335,7 +475,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 	}
 }
 
-- (CGFloat)preferHeight
+- (CGFloat)preferredHeight
 {
 	CGFloat height = self.items.count * ROW_HEIGHT + VERTICAL_INSET * 2;
 	if (self.title) {
@@ -450,7 +590,19 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         return;
     }
     _viewBackgroundColor = viewBackgroundColor;
-    self.containerView.backgroundColor = viewBackgroundColor;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [[SIPopoverBackgroundView appearance] setTintColor:viewBackgroundColor];
+    } else {
+        self.containerView.backgroundColor = viewBackgroundColor;
+    }
+}
+
+- (UIColor *)viewBackgroundColor
+{
+    if (!_viewBackgroundColor) {
+        return [[[self class] appearance] viewBackgroundColor];
+    }
+    return _viewBackgroundColor;
 }
 
 - (void)setTitleFont:(UIFont *)titleFont
