@@ -58,22 +58,20 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
     UIViewController *currentViewController = [self currentViewController];
     
-    if ([currentViewController childViewControllerForStatusBarStyle]) {
-        return [currentViewController childViewControllerForStatusBarStyle];
-    } else {
-        return currentViewController;
+    while ([currentViewController childViewControllerForStatusBarStyle]) {
+        currentViewController = [currentViewController childViewControllerForStatusBarStyle];
     }
+    return currentViewController;
 }
 
 - (UIViewController *)viewControllerForStatusBarHidden
 {
     UIViewController *currentViewController = [self currentViewController];
     
-    if ([currentViewController childViewControllerForStatusBarHidden]) {
-        return [currentViewController childViewControllerForStatusBarHidden];
-    } else {
-        return currentViewController;
+    while ([currentViewController childViewControllerForStatusBarHidden]) {
+        currentViewController = [currentViewController childViewControllerForStatusBarHidden];
     }
+    return currentViewController;
 }
 
 @end
