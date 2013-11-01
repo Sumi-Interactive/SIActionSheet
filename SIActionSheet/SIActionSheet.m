@@ -8,6 +8,7 @@
 
 #import "SIActionSheet.h"
 #import "SIPopoverBackgroundView.h"
+#import "UIWindow+SIUtils.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define HEADER_HEIGHT 40
@@ -24,58 +25,6 @@ NSString *const SIActionSheetWillDismissNotification = @"SIActionSheetWillDismis
 NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissNotification";
 
 NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIActionSheetDismissNotificationUserInfoButtonIndexKey";
-
-@interface UIWindow (SIActionSheet_Utils)
-
-- (UIViewController *)currentViewController;
-
-@end
-
-@implementation UIWindow (SIActionSheet_Utils)
-
-- (UIViewController *)currentViewController
-{
-    UIViewController *viewController = self.rootViewController;
-    while (viewController.presentedViewController) {
-        viewController = viewController.presentedViewController;
-    }
-    return viewController;
-}
-
-@end
-
-#ifdef __IPHONE_7_0
-@interface UIWindow (SIActionSheet_StatusBarUtils)
-
-- (UIViewController *)viewControllerForStatusBarStyle;
-- (UIViewController *)viewControllerForStatusBarHidden;
-
-@end
-
-@implementation UIWindow (SIActionSheet_StatusBarUtils)
-
-- (UIViewController *)viewControllerForStatusBarStyle
-{
-    UIViewController *currentViewController = [self currentViewController];
-    
-    while ([currentViewController childViewControllerForStatusBarStyle]) {
-        currentViewController = [currentViewController childViewControllerForStatusBarStyle];
-    }
-    return currentViewController;
-}
-
-- (UIViewController *)viewControllerForStatusBarHidden
-{
-    UIViewController *currentViewController = [self currentViewController];
-    
-    while ([currentViewController childViewControllerForStatusBarHidden]) {
-        currentViewController = [currentViewController childViewControllerForStatusBarHidden];
-    }
-    return currentViewController;
-}
-
-@end
-#endif
 
 @interface SIActionSheet () <UITableViewDataSource, UIPopoverControllerDelegate>
 

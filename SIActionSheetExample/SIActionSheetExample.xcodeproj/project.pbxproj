@@ -27,6 +27,7 @@
 		7EC33FDE1752058500CF4BAA /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDD1752058500CF4BAA /* Icon-72.png */; };
 		7EC33FE01752058800CF4BAA /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDF1752058800CF4BAA /* Icon-72@2x.png */; };
 		7EC33FE517534D0000CF4BAA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FE417534D0000CF4BAA /* QuartzCore.framework */; };
+		7EEECA6C1823521A001FEDF5 /* UIWindow+SIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EEECA6B1823521A001FEDF5 /* UIWindow+SIUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,8 @@
 		7EC33FDD1752058500CF4BAA /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		7EC33FDF1752058800CF4BAA /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
 		7EC33FE417534D0000CF4BAA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		7EEECA6A1823521A001FEDF5 /* UIWindow+SIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWindow+SIUtils.h"; sourceTree = "<group>"; };
+		7EEECA6B1823521A001FEDF5 /* UIWindow+SIUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+SIUtils.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +137,8 @@
 				7EC33FD41752055700CF4BAA /* SIActionSheet.bundle */,
 				7EC33FD51752055700CF4BAA /* SIActionSheet.h */,
 				7EC33FD61752055700CF4BAA /* SIActionSheet.m */,
+				7EEECA6A1823521A001FEDF5 /* UIWindow+SIUtils.h */,
+				7EEECA6B1823521A001FEDF5 /* UIWindow+SIUtils.m */,
 				7E5C34D117B3E4EB009145D4 /* SIPopoverBackgroundView.h */,
 				7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */,
 			);
@@ -250,6 +255,7 @@
 				7EC33FCD1752051100CF4BAA /* ViewController.m in Sources */,
 				7EC33FD81752055700CF4BAA /* SIActionSheet.m in Sources */,
 				7E5C34D317B3E4EB009145D4 /* SIPopoverBackgroundView.m in Sources */,
+				7EEECA6C1823521A001FEDF5 /* UIWindow+SIUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
