@@ -82,7 +82,7 @@
     }];
     [actionSheet show];
     actionSheet.titleColor = [UIColor redColor];
-    actionSheet.buttonFont = [UIFont fontWithName:@"AmericanTypewriter" size:17];
+    actionSheet.defaultButtonFont = [UIFont fontWithName:@"AmericanTypewriter" size:17];
 }
 
 - (IBAction)show3:(id)sender
