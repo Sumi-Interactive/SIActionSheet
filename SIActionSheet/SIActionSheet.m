@@ -537,7 +537,9 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     SIActionSheetItem *item = self.items[indexPath.row];
-    item.action(self);
+    if (item.action) {
+        item.action(self);
+    }
     
     [self dismissWithButtonIndex:indexPath.row animated:YES notifyDelegate:YES];
 }
