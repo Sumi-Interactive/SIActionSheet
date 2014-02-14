@@ -8,7 +8,7 @@
 
 #import "SIActionSheet.h"
 #import "SIPopoverBackgroundView.h"
-#import "UIWindow+SIUtils.h"
+#import "SISecondaryWindowRootViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define HEADER_HEIGHT 40
@@ -58,7 +58,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 @end
 
-@interface SIActionSheetViewController : UIViewController
+@interface SIActionSheetViewController : SISecondaryWindowRootViewController
 
 @property (nonatomic, strong) SIActionSheet *actionSheet;
 
@@ -70,62 +70,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
     self.view = self.actionSheet;
 }
-
-#ifdef __IPHONE_7_0
-- (void)willAnimateRotationToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
-{
-    if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)]) {
-        [self setNeedsStatusBarAppearanceUpdate];
-    }
-}
-#endif
-
-- (NSUInteger)supportedInterfaceOrientations
-{
-    UIViewController *viewController = [self.actionSheet.oldKeyWindow currentViewController];
-    if (viewController) {
-        return [viewController supportedInterfaceOrientations];
-    }
-    return UIInterfaceOrientationMaskAll;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation
-{
-    UIViewController *viewController = [self.actionSheet.oldKeyWindow currentViewController];
-    if (viewController) {
-        return [viewController shouldAutorotateToInterfaceOrientation:toInterfaceOrientation];
-    }
-    return YES;
-}
-
-- (BOOL)shouldAutorotate
-{
-    UIViewController *viewController = [self.actionSheet.oldKeyWindow currentViewController];
-    if (viewController) {
-        return [viewController shouldAutorotate];
-    }
-    return YES;
-}
-
-#ifdef __IPHONE_7_0
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    UIWindow *window = self.actionSheet.oldKeyWindow;
-    if (!window) {
-        window = [UIApplication sharedApplication].windows[0];
-    }
-    return [[window viewControllerForStatusBarStyle] preferredStatusBarStyle];
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-    UIWindow *window = self.actionSheet.oldKeyWindow;
-    if (!window) {
-        window = [UIApplication sharedApplication].windows[0];
-    }
-    return [[window viewControllerForStatusBarHidden] prefersStatusBarHidden];
-}
-#endif
 
 - (CGSize)contentSizeForViewInPopover
 {
