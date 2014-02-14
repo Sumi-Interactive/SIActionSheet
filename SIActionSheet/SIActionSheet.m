@@ -48,9 +48,9 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 @interface SIActionSheetItem : NSObject
 
-@property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSAttributedString *attributedTitle;
 @property (nonatomic, assign) SIActionSheetButtonType type;
-@property (nonatomic, copy) SIActionSheetShowHandler action;
+@property (nonatomic, copy) SIActionSheetHandler action;
 
 @end
 
@@ -94,19 +94,24 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     
     SIActionSheet *appearance = [self appearance];
     appearance.viewBackgroundColor = [UIColor whiteColor];
-    appearance.titleColor = [UIColor grayColor];
-    appearance.titleFont = [UIFont systemFontOfSize:16];
-    appearance.defaultButtonColor = [UIColor darkGrayColor];
-    appearance.defaultButtonBackgroundColor = [UIColor colorWithWhite:0 alpha:0.01];
-    appearance.defaultButtonFont = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
-    appearance.cancelButtonColor = [UIColor darkGrayColor];
-    appearance.cancelButtonBackgroundColor = [UIColor colorWithWhite:0 alpha:0.03];
-    appearance.cancelButtonFont = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
-    appearance.destructiveButtonColor = [UIColor colorWithRed:0.322 green:0.110 blue:0.097 alpha:1.000];
-    appearance.destructiveButtonBackgroundColor = [UIColor colorWithRed:0.96f green:0.37f blue:0.31f alpha:1.00f];
-    appearance.destructiveButtonFont = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
     appearance.seperatorColor = [UIColor colorWithWhite:0 alpha:0.1];
     appearance.shadowOpacity = 0.5;
+    
+    appearance.defaultButtonBackgroundColor = [UIColor colorWithWhite:0.99 alpha:1];
+    appearance.cancelButtonBackgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
+    appearance.destructiveButtonBackgroundColor = [UIColor colorWithWhite:0.99 alpha:1];
+    
+    UIFont *titleFont = [UIFont boldSystemFontOfSize:[UIFont labelFontSize]];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineHeightMultiple = 1.1;
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    appearance.titleAttributes = @{NSFontAttributeName : titleFont, NSParagraphStyleAttributeName : paragraphStyle};
+    
+    UIFont *defaultButtonFont = [UIFont systemFontOfSize:[UIFont buttonFontSize]];
+    UIFont *otherButtonFont = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
+    appearance.defaultButtonAttributes = @{NSFontAttributeName : defaultButtonFont, NSForegroundColorAttributeName : [UIColor darkGrayColor]};
+    appearance.cancelButtonAttributes = @{NSFontAttributeName : otherButtonFont, NSForegroundColorAttributeName : [UIColor darkGrayColor]};
+    appearance.destructiveButtonAttributes = @{NSFontAttributeName : otherButtonFont, NSForegroundColorAttributeName : [UIColor colorWithRed:0.96f green:0.37f blue:0.31f alpha:1.00f]};
 }
 
 - (id)init
@@ -118,11 +123,50 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
 	self = [super init];
 	if (self) {
-		_title = title;
+        if (title) {
+            _attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:[self titleAttributes]];
+        }
 		self.items = [NSMutableArray array];
 	}
 	return self;
 }
+
+- (id)initWithAttributedTitle:(NSAttributedString *)attributedTitle
+{
+    self = [super init];
+	if (self) {
+		_attributedTitle = attributedTitle;
+		self.items = [NSMutableArray array];
+	}
+	return self;
+}
+
+#pragma mark - Setters & Getters
+
+- (void)setTitle:(NSString *)title
+{
+    if (title) {
+        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:[self titleAttributes]];
+        self.attributedTitle = attributedTitle;
+    } else {
+        self.attributedTitle = nil;
+    }
+}
+
+- (NSString *)title
+{
+    return self.attributedTitle.string;
+}
+
+- (void)setAttributedTitle:(NSAttributedString *)attributedTitle
+{
+    _attributedTitle = [attributedTitle copy];
+    if (self.isVisible) {
+        [self setupTitleLabel];
+    }
+}
+
+#pragma mark - Layout
 
 - (void)layoutSubviews
 {
@@ -149,19 +193,28 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     return NO;
 }
 
-- (void)setTitle:(NSString *)title
+- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler
 {
-    if (_title != title) {
-        _title = title;
-        [self setupTitleLabel];
-        [self setNeedsLayout];
+    NSDictionary *attributes = nil;
+    switch (type) {
+        case SIActionSheetButtonTypeDefault:
+            attributes = self.defaultButtonAttributes;
+            break;
+        case SIActionSheetButtonTypeCancel:
+            attributes = self.cancelButtonAttributes;
+            break;
+        case SIActionSheetButtonTypeDestructive:
+            attributes = self.destructiveButtonAttributes;
+            break;
     }
+    NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attributes];
+    [self addButtonWithAttributedTitle:attributedTitle type:type handler:handler];
 }
 
-- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetShowHandler)handler
+- (void)addButtonWithAttributedTitle:(NSAttributedString *)attributedTitle type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler
 {
-	SIActionSheetItem *item = [[SIActionSheetItem alloc] init];
-	item.title = title;
+    SIActionSheetItem *item = [[SIActionSheetItem alloc] init];
+	item.attributedTitle = attributedTitle;
 	item.type = type;
 	item.action = handler;
 	[self.items addObject:item];
@@ -389,14 +442,11 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 		if (!self.titleLabel) {
 			self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
 			self.titleLabel.textAlignment = NSTextAlignmentCenter;
-			self.titleLabel.text = self.title;
-			self.titleLabel.textColor = self.titleColor;
-			self.titleLabel.font = self.titleFont;
             self.titleLabel.backgroundColor = [UIColor clearColor];
-            self.titleLabel.numberOfLines = TITLE_LINES_MAX;
+            self.titleLabel.numberOfLines = 0;
 			[self.containerView addSubview:self.titleLabel];
 		}
-		self.titleLabel.text = self.title;
+		self.titleLabel.attributedText = self.attributedTitle;
 	} else {
 		[self.titleLabel removeFromSuperview];
 		self.titleLabel = nil;
@@ -414,8 +464,10 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (CGFloat)heightForTitleLabel
 {
-    CGSize size = [self.title sizeWithFont:self.titleFont constrainedToSize:CGSizeMake(self.bounds.size.width - HORIZONTAL_PADDING * 2, self.titleFont.lineHeight * TITLE_LINES_MAX)];
-    return ceil(size.height);
+    CGRect rect = [self.attributedTitle boundingRectWithSize:CGSizeMake(self.bounds.size.width - HORIZONTAL_PADDING * 2, CGFLOAT_MAX)
+                                                     options:NSStringDrawingUsesLineFragmentOrigin
+                                                     context:nil];
+    return ceil(rect.size.height);
 }
 
 - (NSArray *)visibleCellsWithType:(SIActionSheetButtonType)type
@@ -455,23 +507,17 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     switch (item.type) {
         case SIActionSheetButtonTypeDefault:
             cell.backgroundColor = self.defaultButtonBackgroundColor;
-            cell.textLabel.textColor = self.defaultButtonColor;
-            cell.textLabel.font = self.defaultButtonFont;
             break;
         case SIActionSheetButtonTypeCancel:
             cell.backgroundColor = self.cancelButtonBackgroundColor;
-            cell.textLabel.textColor = self.cancelButtonColor;
-            cell.textLabel.font = self.cancelButtonFont;
             break;
         case SIActionSheetButtonTypeDestructive:
             cell.backgroundColor = self.destructiveButtonBackgroundColor;
-            cell.textLabel.textColor = self.destructiveButtonColor;
-            cell.textLabel.font = self.destructiveButtonFont;
             break;
         default:
             break;
     }
-    cell.textLabel.text = item.title;
+    cell.textLabel.attributedText = item.attributedTitle;
     
     return cell;
 }
@@ -541,52 +587,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     return _viewBackgroundColor;
 }
 
-- (void)setTitleFont:(UIFont *)titleFont
-{
-    if (_titleFont == titleFont) {
-        return;
-    }
-    _titleFont = titleFont;
-    
-    self.titleLabel.font = titleFont;
-}
-
-- (void)setTitleColor:(UIColor *)titleColor
-{
-    if (_titleColor == titleColor) {
-        return;
-    }
-    _titleColor = titleColor;
-    
-    self.titleLabel.textColor = titleColor;
-}
-
-- (void)setDefaultButtonFont:(UIFont *)defaultButtonFont
-{
-    if (_defaultButtonFont == defaultButtonFont) {
-        return;
-    }
-    _defaultButtonFont = defaultButtonFont;
-    
-    NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeDefault];
-    [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        ((UITableViewCell *)obj).textLabel.font = defaultButtonFont;
-    }];
-}
-
-- (void)setDefaultButtonColor:(UIColor *)defaultButtonColor
-{
-    if (_defaultButtonColor == defaultButtonColor) {
-        return;
-    }
-    _defaultButtonColor = defaultButtonColor;
-    
-    NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeDefault];
-    [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        ((UITableViewCell *)obj).textLabel.textColor = defaultButtonColor;
-    }];
-}
-
 - (void)setDefaultButtonBackgroundColor:(UIColor *)defaultButtonBackgroundColor
 {
     if (_defaultButtonBackgroundColor == defaultButtonBackgroundColor) {
@@ -600,32 +600,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     }];
 }
 
-- (void)setCancelButtonFont:(UIFont *)cancelButtonFont
-{
-    if (_cancelButtonFont == cancelButtonFont) {
-        return;
-    }
-    _cancelButtonFont = cancelButtonFont;
-    
-    NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeCancel];
-    [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        ((UITableViewCell *)obj).textLabel.font = cancelButtonFont;
-    }];
-}
-
-- (void)setCancelButtonColor:(UIColor *)cancelButtonColor
-{
-    if (_cancelButtonColor == cancelButtonColor) {
-        return;
-    }
-    _cancelButtonColor = cancelButtonColor;
-    
-    NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeCancel];
-    [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        ((UITableViewCell *)obj).textLabel.textColor = cancelButtonColor;
-    }];
-}
-
 - (void)setCancelButtonBackgroundColor:(UIColor *)cancelButtonBackgroundColor
 {
     if (_cancelButtonBackgroundColor == cancelButtonBackgroundColor) {
@@ -636,32 +610,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeCancel];
     [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         ((UITableViewCell *)obj).backgroundColor = cancelButtonBackgroundColor;
-    }];
-}
-
-- (void)setDestructiveButtonFont:(UIFont *)destructiveButtonFont
-{
-    if (_destructiveButtonFont == destructiveButtonFont) {
-        return;
-    }
-    _destructiveButtonFont = destructiveButtonFont;
-    
-    NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeDestructive];
-    [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        ((UITableViewCell *)obj).textLabel.font = destructiveButtonFont;
-    }];
-}
-
-- (void)setDestructiveButtonColor:(UIColor *)destructiveButtonColor
-{
-    if (_destructiveButtonColor == destructiveButtonColor) {
-        return;
-    }
-    _destructiveButtonColor = destructiveButtonColor;
-    
-    NSArray *cells = [self visibleCellsWithType:SIActionSheetButtonTypeDestructive];
-    [cells enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        ((UITableViewCell *)obj).textLabel.textColor = destructiveButtonColor;
     }];
 }
 
@@ -697,6 +645,52 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     _shadowOpacity = shadowOpacity;
     
     self.containerView.layer.shadowOpacity = shadowOpacity;
+}
+
+- (NSDictionary *)titleAttributes
+{
+    if (!_titleAttributes) {
+        return [[[self class] appearance] titleAttributes];
+    }
+    return _titleAttributes;
+}
+
+- (NSDictionary *)defaultButtonAttributes
+{
+    NSDictionary *attributes = _defaultButtonAttributes;
+    if (!attributes) {
+        attributes = [[[self class] appearance] defaultButtonAttributes];
+    }
+    return [self tintedAttributes:attributes];
+}
+
+- (NSDictionary *)cancelButtonAttributes
+{
+    NSDictionary *attributes = _cancelButtonAttributes;
+    if (!attributes) {
+        attributes = [[[self class] appearance] cancelButtonAttributes];
+    }
+    return [self tintedAttributes:attributes];
+}
+
+- (NSDictionary *)destructiveButtonAttributes
+{
+    NSDictionary *attributes = _destructiveButtonAttributes;
+    if (!attributes) {
+        attributes = [[[self class] appearance] destructiveButtonAttributes];
+    }
+    return [self tintedAttributes:attributes];
+}
+
+// support tint
+- (NSDictionary *)tintedAttributes:(NSDictionary *)attributes
+{
+    if (!attributes[NSForegroundColorAttributeName]) {
+        NSMutableDictionary *temp = [attributes mutableCopy];
+        temp[NSForegroundColorAttributeName] = self.tintColor;
+        attributes = [temp copy];
+    }
+    return attributes;
 }
 
 @end

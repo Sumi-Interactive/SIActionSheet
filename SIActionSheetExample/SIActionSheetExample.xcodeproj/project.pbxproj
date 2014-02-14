@@ -21,7 +21,6 @@
 		7EC33FC71752051000CF4BAA /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FC51752051000CF4BAA /* MainStoryboard_iPhone.storyboard */; };
 		7EC33FCA1752051100CF4BAA /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FC81752051000CF4BAA /* MainStoryboard_iPad.storyboard */; };
 		7EC33FCD1752051100CF4BAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC33FCC1752051100CF4BAA /* ViewController.m */; };
-		7EC33FD71752055700CF4BAA /* SIActionSheet.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FD41752055700CF4BAA /* SIActionSheet.bundle */; };
 		7EC33FD81752055700CF4BAA /* SIActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC33FD61752055700CF4BAA /* SIActionSheet.m */; };
 		7EC33FDA1752057A00CF4BAA /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FD91752057A00CF4BAA /* Icon.png */; };
 		7EC33FDC1752057E00CF4BAA /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDB1752057E00CF4BAA /* Icon@2x.png */; };
@@ -53,7 +52,6 @@
 		7EC33FC91752051100CF4BAA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		7EC33FCB1752051100CF4BAA /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		7EC33FCC1752051100CF4BAA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		7EC33FD41752055700CF4BAA /* SIActionSheet.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SIActionSheet.bundle; sourceTree = "<group>"; };
 		7EC33FD51752055700CF4BAA /* SIActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIActionSheet.h; sourceTree = "<group>"; };
 		7EC33FD61752055700CF4BAA /* SIActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIActionSheet.m; sourceTree = "<group>"; };
 		7EC33FD91752057A00CF4BAA /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
@@ -137,7 +135,6 @@
 		7EC33FD31752055700CF4BAA /* SIActionSheet */ = {
 			isa = PBXGroup;
 			children = (
-				7EC33FD41752055700CF4BAA /* SIActionSheet.bundle */,
 				7EC33FD51752055700CF4BAA /* SIActionSheet.h */,
 				7EC33FD61752055700CF4BAA /* SIActionSheet.m */,
 				7EEECA6A1823521A001FEDF5 /* UIWindow+SIUtils.h */,
@@ -240,7 +237,6 @@
 				7EC33FC41752051000CF4BAA /* Default-568h@2x.png in Resources */,
 				7EC33FC71752051000CF4BAA /* MainStoryboard_iPhone.storyboard in Resources */,
 				7EC33FCA1752051100CF4BAA /* MainStoryboard_iPad.storyboard in Resources */,
-				7EC33FD71752055700CF4BAA /* SIActionSheet.bundle in Resources */,
 				7EC33FDA1752057A00CF4BAA /* Icon.png in Resources */,
 				7EC33FDC1752057E00CF4BAA /* Icon@2x.png in Resources */,
 				7EC33FDE1752058500CF4BAA /* Icon-72.png in Resources */,

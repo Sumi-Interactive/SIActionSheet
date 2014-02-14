@@ -22,37 +22,41 @@ typedef NS_ENUM(NSInteger, SIActionSheetButtonType) {
     SIActionSheetButtonTypeDestructive,
     SIActionSheetButtonTypeCancel
 };
-typedef void(^SIActionSheetShowHandler)(SIActionSheet *actionSheet);
+typedef void(^SIActionSheetHandler)(SIActionSheet *actionSheet);
 typedef void(^SIActionSheetDismissHandler)(SIActionSheet *actionSheet, NSInteger buttonIndex);
 
 @interface SIActionSheet : UIView
 
 @property (nonatomic, copy) NSString *title;
+@property (nonatomic, copy) NSAttributedString *attributedTitle;
+
 @property (nonatomic, assign) BOOL allowTapBackgroundToDismiss;
 @property (nonatomic, assign, getter = isVisible) BOOL visible;
 
-@property (nonatomic, copy) SIActionSheetShowHandler willShowHandler;
-@property (nonatomic, copy) SIActionSheetShowHandler didShowHandler;
+@property (nonatomic, copy) SIActionSheetHandler willShowHandler;
+@property (nonatomic, copy) SIActionSheetHandler didShowHandler;
 @property (nonatomic, copy) SIActionSheetDismissHandler willDismissHandler;
 @property (nonatomic, copy) SIActionSheetDismissHandler didDismissHandler;
 
-@property (nonatomic, strong) UIColor *viewBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *titleColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIFont *titleFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *defaultButtonColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *defaultButtonBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIFont *defaultButtonFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *cancelButtonColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *cancelButtonBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIFont *cancelButtonFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *destructiveButtonColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *destructiveButtonBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIFont *destructiveButtonFont NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
-@property (nonatomic, strong) UIColor *seperatorColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+// theme
+
+@property (nonatomic, strong) UIColor *viewBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is [UIColor white]
+@property (nonatomic, strong) UIColor *seperatorColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is [UIColor colorWithWhite:0 alpha:0.1]
 @property (nonatomic, assign) CGFloat shadowOpacity NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is 0.5
 
+@property (nonatomic, strong) NSDictionary *titleAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+
+@property (nonatomic, strong) NSDictionary *defaultButtonAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) NSDictionary *cancelButtonAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) NSDictionary *destructiveButtonAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *defaultButtonBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *cancelButtonBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+@property (nonatomic, strong) UIColor *destructiveButtonBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
+
 - (id)initWithTitle:(NSString *)title;
-- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetShowHandler)handler;
+- (id)initWithAttributedTitle:(NSAttributedString *)attributedTitle;
+- (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
+- (void)addButtonWithAttributedTitle:(NSAttributedString *)attributedTitle type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
 
 - (void)show;
 - (void)showFromRect:(CGRect)rect inView:(UIView *)view;
