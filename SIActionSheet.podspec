@@ -14,5 +14,4 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.framework    = 'QuartzCore'
   s.source_files = 'SIActionSheet/*.{h,m}'
-  s.resources    = 'SIActionSheet/SIActionSheet.bundle'
 end
