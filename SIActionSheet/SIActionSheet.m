@@ -77,7 +77,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (CGSize)preferredContentSize
 {
-    return CGSizeMake(320.0, [self.actionSheet preferredHeight] + 58); // TODO: replace hardcode value
+    return CGSizeMake(320.0, [self.actionSheet preferredHeight] + 45); // TODO: replace hardcode value
 }
 
 @end
@@ -190,7 +190,8 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         CGSize size = [self titleLabelSize];
 		self.titleLabel.frame = CGRectMake(HORIZONTAL_PADDING, PADDING_TOP, size.width, size.height);
         CGFloat y = PADDING_TOP + self.titleLabel.frame.size.height + GAP;
-		self.tableView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, self.containerView.bounds.size.height - y);
+        CGFloat tableHeight = self.items.count * ROW_HEIGHT + 1;
+		self.tableView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, tableHeight);
 	} else {
 		self.tableView.frame = self.containerView.bounds;
 	}
@@ -363,8 +364,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
             CGRect targetRect = self.containerView.frame;
             targetRect.origin.y += targetRect.size.height;
             [UIView animateWithDuration:0.3
-                                  delay:0
-                                options:UIViewAnimationOptionCurveEaseIn
                              animations:^{
                                  self.backgroundView.alpha = 0;
                                  self.containerView.frame = targetRect;
@@ -515,10 +514,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (!cell) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        
-        UIView *solid = [[UIView alloc] initWithFrame:cell.bounds];
-        solid.backgroundColor = [UIColor colorWithWhite:0 alpha:0.05]; // darken overlay
-        cell.selectedBackgroundView = solid;
+        cell.textLabel.backgroundColor = [UIColor clearColor];
 	}
 	
     SIActionSheetItem *item = self.items[indexPath.row];
@@ -535,6 +531,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         default:
             break;
     }
+    cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[self imageWithUIColor:[self highlightedColorWithColor:cell.backgroundColor]]];
     cell.textLabel.attributedText = item.attributedTitle;
     
     return cell;
@@ -710,6 +707,44 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         attributes = [temp copy];
     }
     return attributes;
+}
+
+#pragma mark - Helpers
+
+// auto detected darken or lighten
+- (UIColor *)highlightedColorWithColor:(UIColor *)color
+{
+    CGFloat hue;
+    CGFloat saturation;
+    CGFloat brightness;
+    CGFloat alpha;
+    CGFloat adjustment = 0.1;
+    
+    int numComponents = CGColorGetNumberOfComponents([color CGColor]);
+    
+    // grayscale
+    if (numComponents == 2) {
+        [color getWhite:&brightness alpha:&alpha];
+        brightness += brightness > 0.5 ? -adjustment : adjustment * 2; // emphasize lighten adjustment value by two
+        return [UIColor colorWithWhite:brightness alpha:alpha];
+    }
+    
+    // RGBA
+    [color getHue:&hue saturation:&saturation brightness:&brightness alpha:&alpha];
+    brightness += brightness > 0.5 ? -adjustment : adjustment * 2;
+    
+    return [UIColor colorWithHue:hue saturation:saturation brightness:brightness alpha:alpha];
+}
+
+- (UIImage *)imageWithUIColor:(UIColor *)color
+{
+    CGRect rect = CGRectMake(0, 0, 1, 1);
+    UIGraphicsBeginImageContextWithOptions(rect.size, NO, 0);
+    [color set];
+    UIRectFill(rect);
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
 }
 
 @end

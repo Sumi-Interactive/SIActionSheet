@@ -66,21 +66,30 @@
     double delayInSeconds = 1.0;
     dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        actionSheet.title = @"NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. ";
+        actionSheet.title = @"Donec sed odio dui. Curabitur blandit tempus porttitor. Maecenas faucibus mollis interdum. Vestibulum id ligula porta felis euismod semper.Nulla vitae elit libero, a pharetra augue.Aenean lacinia bibendum nulla sed consectetur. Maecenas sed diam eget risus varius blandit sit amet non magna. Etiam porta sem malesuada magna mollis euismod. Donec id elit non mi porta gravida at eget metus. Curabitur blandit tempus porttitor. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.";
     });
 }
 
 - (IBAction)show2:(id)sender
 {
-    SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithTitle:@"NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. NOTE: iCloud preference will overwrite local preference. The passcode will not be synced."];
+    UIFont *titleFont = [UIFont fontWithName:@"AmericanTypewriter" size:20];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineHeightMultiple = 1.1;
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    NSDictionary *attributes = @{NSFontAttributeName : titleFont, NSParagraphStyleAttributeName : paragraphStyle};
+    NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:@"Donec sed odio dui. Curabitur blandit tempus porttitor." attributes:attributes];
+    
+    SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithAttributedTitle:attributedString];
     [actionSheet addButtonWithTitle:@"A Very Very Very Very Very Long Title Button1" type:SIActionSheetButtonTypeDefault handler:^(SIActionSheet *actionSheet) {
         NSLog(@"%@", actionSheet);
     }];
     [actionSheet addButtonWithTitle:@"Button2" type:SIActionSheetButtonTypeCancel handler:^(SIActionSheet *actionSheet) {
         NSLog(@"%@", actionSheet);
     }];
+    [actionSheet addButtonWithTitle:@"Button3" type:SIActionSheetButtonTypeDestructive handler:^(SIActionSheet *actionSheet) {
+        NSLog(@"%@", actionSheet);
+    }];
     [actionSheet show];
-//    actionSheet.defaultButtonFont = [UIFont fontWithName:@"AmericanTypewriter" size:17];
 }
 
 - (IBAction)show3:(id)sender
