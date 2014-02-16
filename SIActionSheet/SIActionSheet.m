@@ -11,13 +11,10 @@
 #import "SISecondaryWindowRootViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define HEADER_HEIGHT 40
 #define ROW_HEIGHT 54
-#define VERTICAL_INSET 8
 #define HORIZONTAL_PADDING 20
 #define PADDING_TOP 20
 #define GAP 20
-#define TITLE_LINES_MAX 5
 
 NSString *const SIActionSheetWillShowNotification = @"SIActionSheetWillShowNotification";
 NSString *const SIActionSheetDidShowNotification = @"SIActionSheetDidShowNotification";
