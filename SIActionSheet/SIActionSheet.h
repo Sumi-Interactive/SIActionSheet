@@ -57,6 +57,7 @@ typedef void(^SIActionSheetDismissHandler)(SIActionSheet *actionSheet, NSInteger
 - (id)initWithTitle:(NSString *)title;
 - (id)initWithAttributedTitle:(NSAttributedString *)attributedTitle;
 - (void)addButtonWithTitle:(NSString *)title type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
+- (void)addButtonWithTitle:(NSString *)title font:(UIFont *)font color:(UIColor *)color type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
 - (void)addButtonWithAttributedTitle:(NSAttributedString *)attributedTitle type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
 
 - (void)show;
