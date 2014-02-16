@@ -109,9 +109,9 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     
     UIFont *defaultButtonFont = [UIFont systemFontOfSize:[UIFont buttonFontSize]];
     UIFont *otherButtonFont = [UIFont boldSystemFontOfSize:[UIFont buttonFontSize]];
-    appearance.defaultButtonAttributes = @{NSFontAttributeName : defaultButtonFont, NSForegroundColorAttributeName : [UIColor darkGrayColor]};
-    appearance.cancelButtonAttributes = @{NSFontAttributeName : otherButtonFont, NSForegroundColorAttributeName : [UIColor darkGrayColor]};
-    appearance.destructiveButtonAttributes = @{NSFontAttributeName : otherButtonFont, NSForegroundColorAttributeName : [UIColor colorWithRed:0.96f green:0.37f blue:0.31f alpha:1.00f]};
+    appearance.defaultButtonAttributes = @{NSFontAttributeName : defaultButtonFont, NSForegroundColorAttributeName : [UIColor darkGrayColor], NSParagraphStyleAttributeName : paragraphStyle};
+    appearance.cancelButtonAttributes = @{NSFontAttributeName : otherButtonFont, NSForegroundColorAttributeName : [UIColor darkGrayColor], NSParagraphStyleAttributeName : paragraphStyle};
+    appearance.destructiveButtonAttributes = @{NSFontAttributeName : otherButtonFont, NSForegroundColorAttributeName : [UIColor colorWithRed:0.96f green:0.37f blue:0.31f alpha:1.00f], NSParagraphStyleAttributeName : paragraphStyle};
 }
 
 - (id)init
@@ -163,6 +163,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     _attributedTitle = [attributedTitle copy];
     if (self.isVisible) {
         [self setupTitleLabel];
+        [self setNeedsLayout];
     }
 }
 
@@ -438,10 +439,9 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)setupTitleLabel
 {
-	if (self.title) {
+	if (self.attributedTitle) {
 		if (!self.titleLabel) {
 			self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
-			self.titleLabel.textAlignment = NSTextAlignmentCenter;
             self.titleLabel.backgroundColor = [UIColor clearColor];
             self.titleLabel.numberOfLines = 0;
 			[self.containerView addSubview:self.titleLabel];
@@ -464,6 +464,10 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (CGFloat)heightForTitleLabel
 {
+    if (!self.attributedTitle) {
+        return 0;
+    }
+    
     CGRect rect = [self.attributedTitle boundingRectWithSize:CGSizeMake(self.bounds.size.width - HORIZONTAL_PADDING * 2, CGFLOAT_MAX)
                                                      options:NSStringDrawingUsesLineFragmentOrigin
                                                      context:nil];
@@ -496,7 +500,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 	if (!cell) {
 		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        cell.textLabel.textAlignment = NSTextAlignmentCenter;
         
         UIView *solid = [[UIView alloc] initWithFrame:cell.bounds];
         solid.backgroundColor = [UIColor colorWithWhite:0 alpha:0.05]; // darken overlay
