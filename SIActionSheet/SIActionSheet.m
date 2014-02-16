@@ -11,10 +11,11 @@
 #import "SISecondaryWindowRootViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
-#define ROW_HEIGHT 54
+#define ROW_HEIGHT 50
 #define HORIZONTAL_PADDING 20
 #define PADDING_TOP 20
 #define GAP 20
+#define CONTAINER_INSET 10
 
 NSString *const SIActionSheetWillShowNotification = @"SIActionSheetWillShowNotification";
 NSString *const SIActionSheetDidShowNotification = @"SIActionSheetDidShowNotification";
@@ -28,6 +29,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) UIView *containerView;
+@property (nonatomic, strong) UIView *wrapperView;
 @property (nonatomic, strong) UILabel *titleLabel;
 @property (nonatomic, strong) UITableView *tableView;
 
@@ -92,7 +94,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     SIActionSheet *appearance = [self appearance];
     appearance.viewBackgroundColor = [UIColor whiteColor];
     appearance.seperatorColor = [UIColor colorWithWhite:0 alpha:0.1];
-    appearance.shadowOpacity = 0.5;
+    appearance.cornerRadius = 2;
     
     appearance.defaultButtonBackgroundColor = [UIColor colorWithWhite:0.99 alpha:1];
     appearance.cancelButtonBackgroundColor = [UIColor colorWithWhite:0.97 alpha:1];
@@ -168,17 +170,31 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)layoutSubviews
 {
-    CGFloat height = MIN([self preferredHeight], self.bounds.size.height);
-    self.containerView.frame = CGRectMake(0, self.bounds.size.height - height, self.bounds.size.width, height);
+    self.backgroundView.frame = self.bounds;
+    
+    CGFloat x = 0;
+    CGFloat y = 0;
+    CGFloat width = self.bounds.size.width;
+    CGFloat height = [self preferredHeight];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        width -= CONTAINER_INSET * 2;
+        height = MIN(height, self.bounds.size.height - CONTAINER_INSET * 2);
+        x += CONTAINER_INSET;
+        y = self.bounds.size.height - height - CONTAINER_INSET;
+    }
+    
+    self.containerView.frame = CGRectMake(x, y, width, height);
     self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
+    
 	if (self.titleLabel) {
-		self.titleLabel.frame = CGRectMake(HORIZONTAL_PADDING, PADDING_TOP, self.containerView.bounds.size.width - HORIZONTAL_PADDING * 2, [self heightForTitleLabel]);
+        CGSize size = [self titleLabelSize];
+		self.titleLabel.frame = CGRectMake(HORIZONTAL_PADDING, PADDING_TOP, size.width, size.height);
         CGFloat y = PADDING_TOP + self.titleLabel.frame.size.height + GAP;
 		self.tableView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, self.containerView.bounds.size.height - y);
 	} else {
 		self.tableView.frame = self.containerView.bounds;
 	}
-    self.backgroundView.frame = self.bounds;
+    
 }
 
 #pragma mark - Public
@@ -347,6 +363,8 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
             CGRect targetRect = self.containerView.frame;
             targetRect.origin.y += targetRect.size.height;
             [UIView animateWithDuration:0.3
+                                  delay:0
+                                options:UIViewAnimationOptionCurveEaseIn
                              animations:^{
                                  self.backgroundView.alpha = 0;
                                  self.containerView.frame = targetRect;
@@ -395,8 +413,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)setupViews
 {
-    self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
         self.backgroundView = [[UIView alloc] initWithFrame:self.bounds];
         self.backgroundView.backgroundColor = [UIColor colorWithWhite:0 alpha:0.5];
@@ -406,16 +422,20 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     }
     
     self.containerView = [[UIView alloc] initWithFrame:self.bounds];
-    self.containerView.layer.shadowOpacity = self.shadowOpacity;
-    self.containerView.layer.shadowRadius = 3;
+    self.containerView.backgroundColor = [UIColor clearColor];
+    self.containerView.layer.shadowRadius = self.shadowRadius;
+    self.containerView.layer.shadowOpacity = self.shadowRadius > 0 ? 0.5 : 0;
     self.containerView.layer.shadowOffset = CGSizeZero;
-    self.containerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.containerView.bounds].CGPath;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        self.containerView.backgroundColor = [UIColor clearColor];
-    } else {
-        self.containerView.backgroundColor = self.viewBackgroundColor;
-    }
+    
     [self addSubview:self.containerView];
+    
+    self.wrapperView = [[UIView alloc] initWithFrame:self.bounds];
+    self.wrapperView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.wrapperView.autoresizesSubviews = NO;
+    self.wrapperView.layer.cornerRadius = self.cornerRadius;
+    self.wrapperView.clipsToBounds = YES;
+    self.wrapperView.backgroundColor = UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad ? [UIColor clearColor] : self.viewBackgroundColor;
+    [self.containerView addSubview:self.wrapperView];
     
 	self.tableView = [[UITableView alloc] initWithFrame:self.bounds];
 	self.tableView.dataSource = self;
@@ -425,7 +445,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     self.tableView.separatorColor = self.seperatorColor;
     self.tableView.separatorInset = UIEdgeInsetsZero;
     self.tableView.backgroundColor = [UIColor clearColor];
-	[self.containerView addSubview:self.tableView];
+	[self.wrapperView addSubview:self.tableView];
     
     UIView *solid = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.tableView.bounds.size.width, 1 / [UIScreen mainScreen].scale)];
     solid.backgroundColor = self.seperatorColor;
@@ -441,7 +461,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 			self.titleLabel = [[UILabel alloc] initWithFrame:self.bounds];
             self.titleLabel.backgroundColor = [UIColor clearColor];
             self.titleLabel.numberOfLines = 0;
-			[self.containerView addSubview:self.titleLabel];
+			[self.wrapperView addSubview:self.titleLabel];
 		}
 		self.titleLabel.attributedText = self.attributedTitle;
 	} else {
@@ -454,21 +474,19 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
 	CGFloat height = self.items.count * ROW_HEIGHT + 1;
 	if (self.title) {
-		height += PADDING_TOP + GAP + [self heightForTitleLabel];
+		height += PADDING_TOP + GAP + [self titleLabelSize].height;
 	}
 	return height;
 }
 
-- (CGFloat)heightForTitleLabel
+- (CGSize)titleLabelSize
 {
-    if (!self.attributedTitle) {
-        return 0;
+    if (!self.titleLabel) {
+        return CGSizeZero;
     }
     
-    CGRect rect = [self.attributedTitle boundingRectWithSize:CGSizeMake(self.bounds.size.width - HORIZONTAL_PADDING * 2, CGFLOAT_MAX)
-                                                     options:NSStringDrawingUsesLineFragmentOrigin
-                                                     context:nil];
-    return ceil(rect.size.height);
+    CGFloat width = self.bounds.size.width - CONTAINER_INSET * 2 - HORIZONTAL_PADDING * 2;
+    return CGSizeMake(width, ceil([self.titleLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height));
 }
 
 - (NSArray *)visibleCellsWithType:(SIActionSheetButtonType)type
@@ -566,7 +584,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         [[SIPopoverBackgroundView appearance] setTintColor:viewBackgroundColor];
     } else {
-        self.containerView.backgroundColor = viewBackgroundColor;
+        self.wrapperView.backgroundColor = viewBackgroundColor;
     }
 }
 
@@ -628,14 +646,24 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     self.tableView.tableHeaderView.backgroundColor = seperatorColor;
 }
 
-- (void)setShadowOpacity:(CGFloat)shadowOpacity
+- (void)setCornerRadius:(CGFloat)cornerRadius
 {
-    if (_shadowOpacity == shadowOpacity) {
+    if (_cornerRadius == cornerRadius) {
         return;
     }
-    _shadowOpacity = shadowOpacity;
+    _cornerRadius = cornerRadius;
+    self.wrapperView.layer.cornerRadius = cornerRadius;
+}
+
+- (void)setShadowRadius:(CGFloat)shadowRadius
+{
+    if (_shadowRadius == shadowRadius) {
+        return;
+    }
+    _shadowRadius = shadowRadius;
     
-    self.containerView.layer.shadowOpacity = shadowOpacity;
+    self.containerView.layer.shadowRadius = shadowRadius;
+    self.containerView.layer.shadowOpacity = shadowRadius > 0 ? 0.5 : 0;
 }
 
 - (NSDictionary *)titleAttributes

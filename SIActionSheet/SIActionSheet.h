@@ -42,7 +42,8 @@ typedef void(^SIActionSheetDismissHandler)(SIActionSheet *actionSheet, NSInteger
 
 @property (nonatomic, strong) UIColor *viewBackgroundColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is [UIColor white]
 @property (nonatomic, strong) UIColor *seperatorColor NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is [UIColor colorWithWhite:0 alpha:0.1]
-@property (nonatomic, assign) CGFloat shadowOpacity NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is 0.5
+@property (nonatomic, assign) CGFloat cornerRadius NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is 2.0
+@property (nonatomic, assign) CGFloat shadowRadius NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR; // default is 0.0
 
 @property (nonatomic, strong) NSDictionary *titleAttributes NS_AVAILABLE_IOS(5_0) UI_APPEARANCE_SELECTOR;
 
