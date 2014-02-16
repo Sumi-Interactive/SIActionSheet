@@ -548,15 +548,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 #pragma mark - Actions
 
-- (void)buttonAction:(UIButton *)button
-{
-    SIActionSheetItem *item = self.items[button.tag];
-	if (item.action) {
-		item.action(self);
-	}
-	[self dismissWithButtonIndex:button.tag animated:YES notifyDelegate:YES];
-}
-
 - (void)tapHandler:(UIGestureRecognizer *)recognizer
 {
     if (self.allowTapBackgroundToDismiss) {
