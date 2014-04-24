@@ -9,6 +9,7 @@
 #import "SIActionSheet.h"
 #import "SIPopoverBackgroundView.h"
 #import "SISecondaryWindowRootViewController.h"
+#import "UIWindow+SIUtils.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define ROW_HEIGHT 50
@@ -336,6 +337,79 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)showFromRect:(CGRect)rect inView:(UIView *)view
 {
+    [self showFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny];
+}
+
+- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem
+{
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIView *view = [window currentViewController].view;
+    UIView *bar = [self containerForItem:barButtonItem inView:view];
+    if (bar) {
+        [self showFromBarButtonItem:barButtonItem inBar:bar];
+    } else {
+        NSLog(@"%@ not found.", barButtonItem);
+    }
+}
+
+- (UIView *)containerForItem:(UIBarButtonItem *)barButtonItem inView:(UIView *)parentView
+{
+    UIView *bar = nil;
+    for (UIView *view in parentView.subviews) {
+        NSArray *items = nil;
+        if ([view isKindOfClass:[UINavigationBar class]]) {
+            UINavigationItem *navigationItem = [[(UINavigationBar *)view items] lastObject];
+            NSMutableArray *array = [NSMutableArray array];
+            [array addObjectsFromArray:[navigationItem leftBarButtonItems]];
+            [array addObjectsFromArray:[navigationItem rightBarButtonItems]];
+            items = [array copy];
+        } else if ([view isKindOfClass:[UIToolbar class]]) {
+            items = [(UIToolbar *)view items];
+        }
+        if (items.count > 0) {
+            for (UIBarButtonItem *item in items) {
+                if (item == barButtonItem) {
+                    bar = view;
+                    break;
+                }
+            }
+            if (bar) {
+                break;
+            }
+        }
+        if (!bar && view.subviews.count > 0) {
+            bar = [self containerForItem:barButtonItem inView:view];
+            if (bar) {
+                break;
+            }
+        }
+    }
+    return bar;
+}
+
+- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem inBar:(UIView *)bar
+{
+    UIControl *button = nil;
+    for (UIView *subview in bar.subviews) {
+        if ([[subview class].description hasSuffix:@"Button"]) { // UIToolbarButton
+            for (id target in [(UIControl *)subview allTargets]) {
+                if (target == barButtonItem) {
+                    button = (UIControl *)subview;
+                    break;
+                }
+            }
+            if (button != nil) {
+                break;
+            }
+        }
+    }
+    
+    UIPopoverArrowDirection direction = UIPopoverArrowDirectionUp | UIPopoverArrowDirectionDown;
+    [self showFromRect:button.frame inView:bar permittedArrowDirections:direction];
+}
+
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)direction
+{
     if (self.isVisible) {
         return;
     }
@@ -352,7 +426,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     self.popoverController.delegate = self;
     self.popoverController.popoverBackgroundViewClass = [SIPopoverBackgroundView class];
     
-    [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:direction animated:YES];
     
     // tweak ui for popover
     self.backgroundView.hidden = YES;

@@ -130,6 +130,31 @@
     [actionSheet showInView:self.view];
 }
 
+- (IBAction)show5:(id)sender
+{
+    SIActionSheet *actionSheet = [[SIActionSheet alloc] initWithTitle:@"NOTE: iCloud preference will overwrite local preference. The passcode will not be synced. "];
+    [actionSheet addButtonWithTitle:@"Button1" type:SIActionSheetButtonTypeDefault handler:^(SIActionSheet *actionSheet) {
+        NSLog(@"Button1");
+    }];
+    [actionSheet addButtonWithTitle:@"Button2" type:SIActionSheetButtonTypeDestructive handler:^(SIActionSheet *actionSheet) {
+        NSLog(@"Button2");
+    }];
+    actionSheet.willShowHandler = ^(SIActionSheet *actionSheet) {
+        NSLog(@"willShowHandler");
+    };
+    actionSheet.didShowHandler = ^(SIActionSheet *actionSheet) {
+        NSLog(@"didShowHandler");
+    };
+    actionSheet.willDismissHandler = ^(SIActionSheet *actionSheet, NSInteger buttonIndex) {
+        NSLog(@"willDismissHandler:%d", buttonIndex);
+    };
+    actionSheet.didDismissHandler = ^(SIActionSheet *actionSheet, NSInteger buttonIndex) {
+        NSLog(@"didDismissHandler:%d", buttonIndex);
+    };
+    actionSheet.allowTapBackgroundToDismiss = YES;
+    [actionSheet showFromBarButtonItem:sender];
+}
+
 - (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
     NSLog(@"buttonIndex%d", buttonIndex);

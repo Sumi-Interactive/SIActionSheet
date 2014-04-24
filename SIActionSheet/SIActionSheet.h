@@ -62,6 +62,7 @@ typedef void(^SIActionSheetDismissHandler)(SIActionSheet *actionSheet, NSInteger
 
 - (void)show;
 - (void)showFromRect:(CGRect)rect inView:(UIView *)view;
+- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem;
 - (void)dismissWithButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated; // (buttonIndex == -1) means no button is clicked.
 
 @end
