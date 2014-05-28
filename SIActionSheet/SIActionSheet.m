@@ -79,7 +79,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (CGSize)preferredContentSize
 {
-    return CGSizeMake(320.0, [self.actionSheet preferredHeight] + 45); // TODO: replace hardcode value
+    return CGSizeMake(320.0, [self.actionSheet preferredHeight]);
 }
 
 @end
