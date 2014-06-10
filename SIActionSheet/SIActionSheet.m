@@ -553,7 +553,10 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         return CGSizeZero;
     }
     
-    CGFloat width = self.bounds.size.width - CONTAINER_INSET * 2 - HORIZONTAL_PADDING * 2;
+    CGFloat width = self.bounds.size.width - HORIZONTAL_PADDING * 2;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+        width -= CONTAINER_INSET * 2;
+    }
     return CGSizeMake(width, ceil([self.titleLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height));
 }
 
