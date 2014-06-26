@@ -10,6 +10,7 @@
 #import "SIPopoverBackgroundView.h"
 #import "SISecondaryWindowRootViewController.h"
 #import "UIWindow+SIUtils.h"
+#import "SIActionSheetPopoverController.h"
 #import <QuartzCore/QuartzCore.h>
 
 #define ROW_HEIGHT 50
@@ -527,7 +528,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     [[SIPopoverBackgroundView appearance] setTintColor:self.viewBackgroundColor];
     
     SIActionSheetViewController *viewController = [self actionSheetViewController];
-    self.popoverController = [[UIPopoverController alloc] initWithContentViewController:viewController];
+    self.popoverController = [[SIActionSheetPopoverController alloc] initWithContentViewController:viewController];
     self.popoverController.delegate = self;
     self.popoverController.backgroundColor = [UIColor whiteColor];
     //    self.popoverController.popoverBackgroundViewClass = [SIPopoverBackgroundView class];

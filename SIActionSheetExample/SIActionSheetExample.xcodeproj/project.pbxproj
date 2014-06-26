@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		7E5C34D317B3E4EB009145D4 /* SIPopoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */; };
 		7E5D24C618AE0C5500B21A14 /* SISecondaryWindowRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D24C518AE0C5500B21A14 /* SISecondaryWindowRootViewController.m */; };
+		7EA455F2195C04320049C593 /* SIActionSheetPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EA455F1195C04320049C593 /* SIActionSheetPopoverController.m */; };
 		7EC33FAE1752051000CF4BAA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FAD1752051000CF4BAA /* UIKit.framework */; };
 		7EC33FB01752051000CF4BAA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FAF1752051000CF4BAA /* Foundation.framework */; };
 		7EC33FB21752051000CF4BAA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FB11752051000CF4BAA /* CoreGraphics.framework */; };
@@ -35,6 +36,8 @@
 		7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIPopoverBackgroundView.m; sourceTree = "<group>"; };
 		7E5D24C418AE0C5500B21A14 /* SISecondaryWindowRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SISecondaryWindowRootViewController.h; sourceTree = "<group>"; };
 		7E5D24C518AE0C5500B21A14 /* SISecondaryWindowRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SISecondaryWindowRootViewController.m; sourceTree = "<group>"; };
+		7EA455F0195C04320049C593 /* SIActionSheetPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIActionSheetPopoverController.h; sourceTree = "<group>"; };
+		7EA455F1195C04320049C593 /* SIActionSheetPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIActionSheetPopoverController.m; sourceTree = "<group>"; };
 		7EC33FAA1752051000CF4BAA /* SIActionSheetExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SIActionSheetExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC33FAD1752051000CF4BAA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		7EC33FAF1752051000CF4BAA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -143,6 +146,8 @@
 				7E5D24C518AE0C5500B21A14 /* SISecondaryWindowRootViewController.m */,
 				7E5C34D117B3E4EB009145D4 /* SIPopoverBackgroundView.h */,
 				7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */,
+				7EA455F0195C04320049C593 /* SIActionSheetPopoverController.h */,
+				7EA455F1195C04320049C593 /* SIActionSheetPopoverController.m */,
 			);
 			name = SIActionSheet;
 			path = ../SIActionSheet;
@@ -253,6 +258,7 @@
 			files = (
 				7EC33FBA1752051000CF4BAA /* main.m in Sources */,
 				7EC33FBE1752051000CF4BAA /* AppDelegate.m in Sources */,
+				7EA455F2195C04320049C593 /* SIActionSheetPopoverController.m in Sources */,
 				7EC33FCD1752051100CF4BAA /* ViewController.m in Sources */,
 				7EC33FD81752055700CF4BAA /* SIActionSheet.m in Sources */,
 				7E5C34D317B3E4EB009145D4 /* SIPopoverBackgroundView.m in Sources */,
