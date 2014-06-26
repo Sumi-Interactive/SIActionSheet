@@ -319,6 +319,10 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     initialRect.origin.y += initialRect.size.height;
     self.containerView.frame = initialRect;
     [UIView animateWithDuration:0.3
+                          delay:0
+         usingSpringWithDamping:1
+          initialSpringVelocity:0
+                        options:UIViewAnimationOptionCurveLinear
                      animations:^{
                          self.backgroundView.alpha = 1;
                          self.containerView.frame = targetRect;
@@ -416,6 +420,10 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
             CGRect targetRect = self.containerView.frame;
             targetRect.origin.y += targetRect.size.height;
             [UIView animateWithDuration:0.3
+                                  delay:0
+                 usingSpringWithDamping:1
+                  initialSpringVelocity:0
+                                options:UIViewAnimationOptionCurveLinear
                              animations:^{
                                  self.backgroundView.alpha = 0;
                                  self.containerView.frame = targetRect;
