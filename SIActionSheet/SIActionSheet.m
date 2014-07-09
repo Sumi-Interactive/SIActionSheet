@@ -215,7 +215,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         CGSize size = [self titleLabelSize];
 		self.titleLabel.frame = CGRectMake(HORIZONTAL_PADDING, PADDING_TOP, size.width, size.height);
         CGFloat y = PADDING_TOP + self.titleLabel.frame.size.height + GAP;
-		self.tableView.frame = CGRectMake(0, y, self.containerView.bounds.size.width, self.containerView.bounds.size.height - y);
+		self.tableView.frame = CGRectMake(0, y + 1, self.containerView.bounds.size.width, self.containerView.bounds.size.height - y);
 	} else {
 		self.tableView.frame = self.containerView.bounds;
 	}
