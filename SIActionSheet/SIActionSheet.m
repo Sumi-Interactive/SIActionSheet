@@ -807,7 +807,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     CGFloat alpha;
     CGFloat adjustment = 0.1;
     
-    int numComponents = CGColorGetNumberOfComponents([color CGColor]);
+    int numComponents = (int)CGColorGetNumberOfComponents([color CGColor]);
     
     // grayscale
     if (numComponents == 2) {
