@@ -88,7 +88,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 @implementation SIActionSheet
 
 @synthesize viewBackgroundColor = _viewBackgroundColor;
-@synthesize title = _title, attributedTitle = _attributedTitle;
 
 + (void)initialize
 {
@@ -126,9 +125,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
 	self = [super init];
 	if (self) {
-        if (title) {
-            _attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:[self titleAttributes]];
-        }
+        self.title = title;
 		self.items = [NSMutableArray array];
 	}
 	return self;
@@ -138,7 +135,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 {
     self = [super init];
 	if (self) {
-		_attributedTitle = attributedTitle;
+		self.attributedTitle = attributedTitle;
 		self.items = [NSMutableArray array];
 	}
 	return self;
@@ -153,18 +150,15 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     }
     
     _title = [title copy];
-    _attributedTitle = nil;
+    if (title) {
+        _attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:[self titleAttributes]];
+    } else {
+        _attributedTitle = nil;
+    }
+    
     if (self.isVisible) {
         [self setupTitleLabel];
     }
-}
-
-- (NSString *)title
-{
-    if (!_title) {
-        return _attributedTitle.string;
-    }
-    return _title;
 }
 
 - (void)setAttributedTitle:(NSAttributedString *)attributedTitle
@@ -174,21 +168,10 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     }
     
     _attributedTitle = [attributedTitle copy];
-    _title = nil;
+    _title = attributedTitle.string;
     if (self.isVisible) {
         [self setupTitleLabel];
     }
-}
-
-- (NSAttributedString *)attributedTitle
-{
-    if (_attributedTitle) {
-        return _attributedTitle;
-    }
-    if (_title) {
-        return [[NSAttributedString alloc] initWithString:_title attributes:[self titleAttributes]];
-    }
-    return nil;
 }
 
 #pragma mark - Layout
@@ -558,15 +541,18 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (CGSize)titleLabelSize
 {
-    if (!self.titleLabel) {
-        return CGSizeZero;
+    if (self.attributedTitle) {
+        CGFloat width = 0;
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            width = self.bounds.size.width - HORIZONTAL_PADDING * 2 - CONTAINER_INSET * 2;
+        } else {
+            width = 320.0 - HORIZONTAL_PADDING * 2;
+        }
+        CGFloat height = CGRectGetHeight([self.attributedTitle boundingRectWithSize:CGSizeMake(width, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin context:nil]);
+        return CGSizeMake(width, ceil(height));
     }
     
-    CGFloat width = self.bounds.size.width - HORIZONTAL_PADDING * 2;
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
-        width -= CONTAINER_INSET * 2;
-    }
-    return CGSizeMake(width, ceil([self.titleLabel sizeThatFits:CGSizeMake(width, CGFLOAT_MAX)].height));
+    return CGSizeZero;
 }
 
 - (NSArray *)visibleCellsWithType:(SIActionSheetButtonType)type
