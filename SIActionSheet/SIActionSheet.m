@@ -274,6 +274,11 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)showFromRect:(CGRect)rect inView:(UIView *)view
 {
+    [self showFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny];
+}
+
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view permittedArrowDirections:(UIPopoverArrowDirection)arrowDirections
+{
     if (self.isVisible) {
         return;
     }
@@ -290,7 +295,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     self.popoverController.delegate = self;
     self.popoverController.popoverBackgroundViewClass = [SIPopoverBackgroundView class];
     
-    [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    [self.popoverController presentPopoverFromRect:rect inView:view permittedArrowDirections:arrowDirections animated:YES];
     
     // tweak ui for popover
     self.backgroundView.hidden = YES;
