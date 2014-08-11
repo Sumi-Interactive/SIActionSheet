@@ -36,12 +36,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 @property (nonatomic, strong) UITableView *tableView;
 
 @property (nonatomic, strong) UIWindow *actionsheetWindow;
-@property (nonatomic, strong) UIWindow *oldKeyWindow;
 @property (nonatomic, strong) UIPopoverController *popoverController;
-#ifdef __IPHONE_7_0
-@property (nonatomic, assign) UIViewTintAdjustmentMode oldTintAdjustmentMode;
-#endif
-
 
 - (CGFloat)preferredHeight;
 
@@ -279,20 +274,20 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     
     SIActionSheetViewController *viewController = [self actionSheetViewController];
     
+#ifdef __IPHONE_7_0
+    UIWindow *mainWindow = [UIApplication sharedApplication].windows[0];
+    if ([mainWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+        mainWindow.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+    }
+#endif
+    
     UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     window.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     window.opaque = NO;
     window.windowLevel = UIWindowLevelStatusBar + [UIApplication sharedApplication].windows.count;
     window.rootViewController = viewController;
     self.actionsheetWindow = window;
-    
-    self.oldKeyWindow = [UIApplication sharedApplication].keyWindow;
     [self.actionsheetWindow makeKeyAndVisible];
-#ifdef __IPHONE_7_0
-    if ([self.oldKeyWindow respondsToSelector:@selector(tintAdjustmentMode:)]) {
-       self.oldTintAdjustmentMode = self.oldKeyWindow.tintAdjustmentMode;
-    }
-#endif
     
     [self layoutIfNeeded];
     
@@ -309,11 +304,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
                      animations:^{
                          self.backgroundView.alpha = 1;
                          self.containerView.frame = targetRect;
-#ifdef __IPHONE_7_0
-                         if ([self.oldKeyWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
-                             self.oldKeyWindow.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-                         }
-#endif
                      }
                      completion:^(BOOL finished) {
                          if (self.didShowHandler) {
@@ -395,8 +385,14 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
             [self.actionsheetWindow removeFromSuperview];
             self.actionsheetWindow = nil;
             
-            [self.oldKeyWindow makeKeyWindow];
-            self.oldKeyWindow = nil;
+            UIWindow *mainWindow = [UIApplication sharedApplication].windows[0];
+#ifdef __IPHONE_7_0
+            if ([mainWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
+                mainWindow.tintAdjustmentMode = UIViewTintAdjustmentModeNormal;
+            }
+#endif
+            [mainWindow makeKeyWindow];
+            mainWindow.hidden = NO;
         };
         
         if (animated) {
@@ -410,21 +406,11 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
                              animations:^{
                                  self.backgroundView.alpha = 0;
                                  self.containerView.frame = targetRect;
-#ifdef __IPHONE_7_0
-                                 if ([self.oldKeyWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
-                                     self.oldKeyWindow.tintAdjustmentMode = self.oldTintAdjustmentMode;
-                                 }
-#endif
                              }
                              completion:^(BOOL finished) {
                                  dismissCompletion();
                              }];
         } else {
-#ifdef __IPHONE_7_0
-            if ([self.oldKeyWindow respondsToSelector:@selector(setTintAdjustmentMode:)]) {
-                self.oldKeyWindow.tintAdjustmentMode = self.oldTintAdjustmentMode;
-            }
-#endif
             dismissCompletion();
         }
         
