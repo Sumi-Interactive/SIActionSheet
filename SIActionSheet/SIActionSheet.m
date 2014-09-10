@@ -594,6 +594,25 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     return cell;
 }
 
+#define IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // this is a fix for separatorInset = UIEdgeInsetsZero does not take effect on iOS 8
+    // http://openradar.io/17678622
+    if (IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8")) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            for (UIView *view in cell.subviews) {
+                if ([NSStringFromClass([view class]) isEqualToString:@"_UITableViewCellSeparatorView"]) {
+                    CGRect rect = view.frame;
+                    rect.origin.x = 0;
+                    rect.size.width = CGRectGetWidth(cell.frame);
+                    view.frame = rect;
+                }
+            }
+        });
+    }
+}
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
