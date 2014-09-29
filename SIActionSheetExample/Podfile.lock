@@ -1,0 +1,17 @@
+PODS:
+  - SIActionSheet (1.1):
+    - SIBaseKit (~> 0.1.0)
+  - SIBaseKit (0.1.0)
+
+DEPENDENCIES:
+  - SIActionSheet (from `../`)
+
+EXTERNAL SOURCES:
+  SIActionSheet:
+    :path: ../
+
+SPEC CHECKSUMS:
+  SIActionSheet: fba458b2516fe89e7b0895ef176a2dc372451888
+  SIBaseKit: 64aa6bbffabfa4788946c45bb0439bd011c6ac8c
+
+COCOAPODS: 0.33.1

@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7E5C34D317B3E4EB009145D4 /* SIPopoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */; };
-		7E5D24C618AE0C5500B21A14 /* SISecondaryWindowRootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7E5D24C518AE0C5500B21A14 /* SISecondaryWindowRootViewController.m */; };
-		7EA455F2195C04320049C593 /* SIActionSheetPopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EA455F1195C04320049C593 /* SIActionSheetPopoverController.m */; };
 		7EC33FAE1752051000CF4BAA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FAD1752051000CF4BAA /* UIKit.framework */; };
 		7EC33FB01752051000CF4BAA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FAF1752051000CF4BAA /* Foundation.framework */; };
 		7EC33FB21752051000CF4BAA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FB11752051000CF4BAA /* CoreGraphics.framework */; };
@@ -22,22 +19,16 @@
 		7EC33FC71752051000CF4BAA /* MainStoryboard_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FC51752051000CF4BAA /* MainStoryboard_iPhone.storyboard */; };
 		7EC33FCA1752051100CF4BAA /* MainStoryboard_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FC81752051000CF4BAA /* MainStoryboard_iPad.storyboard */; };
 		7EC33FCD1752051100CF4BAA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC33FCC1752051100CF4BAA /* ViewController.m */; };
-		7EC33FD81752055700CF4BAA /* SIActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EC33FD61752055700CF4BAA /* SIActionSheet.m */; };
 		7EC33FDA1752057A00CF4BAA /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FD91752057A00CF4BAA /* Icon.png */; };
 		7EC33FDC1752057E00CF4BAA /* Icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDB1752057E00CF4BAA /* Icon@2x.png */; };
 		7EC33FDE1752058500CF4BAA /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDD1752058500CF4BAA /* Icon-72.png */; };
 		7EC33FE01752058800CF4BAA /* Icon-72@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7EC33FDF1752058800CF4BAA /* Icon-72@2x.png */; };
 		7EC33FE517534D0000CF4BAA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7EC33FE417534D0000CF4BAA /* QuartzCore.framework */; };
-		7EEECA6C1823521A001FEDF5 /* UIWindow+SIUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EEECA6B1823521A001FEDF5 /* UIWindow+SIUtils.m */; };
+		A87D8AF500E7413987A3983A /* libPods-SIActionSheetExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C26E2E6FA1D24FCB98C65918 /* libPods-SIActionSheetExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7E5C34D117B3E4EB009145D4 /* SIPopoverBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIPopoverBackgroundView.h; sourceTree = "<group>"; };
-		7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIPopoverBackgroundView.m; sourceTree = "<group>"; };
-		7E5D24C418AE0C5500B21A14 /* SISecondaryWindowRootViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SISecondaryWindowRootViewController.h; sourceTree = "<group>"; };
-		7E5D24C518AE0C5500B21A14 /* SISecondaryWindowRootViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SISecondaryWindowRootViewController.m; sourceTree = "<group>"; };
-		7EA455F0195C04320049C593 /* SIActionSheetPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIActionSheetPopoverController.h; sourceTree = "<group>"; };
-		7EA455F1195C04320049C593 /* SIActionSheetPopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIActionSheetPopoverController.m; sourceTree = "<group>"; };
+		2B10944D56814805A80ECCF3 /* Pods-SIActionSheetExample.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SIActionSheetExample.xcconfig"; path = "Pods/Pods-SIActionSheetExample.xcconfig"; sourceTree = "<group>"; };
 		7EC33FAA1752051000CF4BAA /* SIActionSheetExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SIActionSheetExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EC33FAD1752051000CF4BAA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		7EC33FAF1752051000CF4BAA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -55,15 +46,12 @@
 		7EC33FC91752051100CF4BAA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard_iPad.storyboard; sourceTree = "<group>"; };
 		7EC33FCB1752051100CF4BAA /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		7EC33FCC1752051100CF4BAA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		7EC33FD51752055700CF4BAA /* SIActionSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SIActionSheet.h; sourceTree = "<group>"; };
-		7EC33FD61752055700CF4BAA /* SIActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SIActionSheet.m; sourceTree = "<group>"; };
 		7EC33FD91752057A00CF4BAA /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		7EC33FDB1752057E00CF4BAA /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		7EC33FDD1752058500CF4BAA /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72.png"; sourceTree = "<group>"; };
 		7EC33FDF1752058800CF4BAA /* Icon-72@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-72@2x.png"; sourceTree = "<group>"; };
 		7EC33FE417534D0000CF4BAA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		7EEECA6A1823521A001FEDF5 /* UIWindow+SIUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIWindow+SIUtils.h"; sourceTree = "<group>"; };
-		7EEECA6B1823521A001FEDF5 /* UIWindow+SIUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIWindow+SIUtils.m"; sourceTree = "<group>"; };
+		C26E2E6FA1D24FCB98C65918 /* libPods-SIActionSheetExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SIActionSheetExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +63,7 @@
 				7EC33FAE1752051000CF4BAA /* UIKit.framework in Frameworks */,
 				7EC33FB01752051000CF4BAA /* Foundation.framework in Frameworks */,
 				7EC33FB21752051000CF4BAA /* CoreGraphics.framework in Frameworks */,
+				A87D8AF500E7413987A3983A /* libPods-SIActionSheetExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,10 +73,10 @@
 		7EC33FA11752051000CF4BAA = {
 			isa = PBXGroup;
 			children = (
-				7EC33FD31752055700CF4BAA /* SIActionSheet */,
 				7EC33FB31752051000CF4BAA /* SIActionSheetExample */,
 				7EC33FAC1752051000CF4BAA /* Frameworks */,
 				7EC33FAB1752051000CF4BAA /* Products */,
+				2B10944D56814805A80ECCF3 /* Pods-SIActionSheetExample.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -106,6 +95,7 @@
 				7EC33FAD1752051000CF4BAA /* UIKit.framework */,
 				7EC33FAF1752051000CF4BAA /* Foundation.framework */,
 				7EC33FB11752051000CF4BAA /* CoreGraphics.framework */,
+				C26E2E6FA1D24FCB98C65918 /* libPods-SIActionSheetExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -133,24 +123,6 @@
 				7EC33FC31752051000CF4BAA /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		7EC33FD31752055700CF4BAA /* SIActionSheet */ = {
-			isa = PBXGroup;
-			children = (
-				7EC33FD51752055700CF4BAA /* SIActionSheet.h */,
-				7EC33FD61752055700CF4BAA /* SIActionSheet.m */,
-				7EEECA6A1823521A001FEDF5 /* UIWindow+SIUtils.h */,
-				7EEECA6B1823521A001FEDF5 /* UIWindow+SIUtils.m */,
-				7E5D24C418AE0C5500B21A14 /* SISecondaryWindowRootViewController.h */,
-				7E5D24C518AE0C5500B21A14 /* SISecondaryWindowRootViewController.m */,
-				7E5C34D117B3E4EB009145D4 /* SIPopoverBackgroundView.h */,
-				7E5C34D217B3E4EB009145D4 /* SIPopoverBackgroundView.m */,
-				7EA455F0195C04320049C593 /* SIActionSheetPopoverController.h */,
-				7EA455F1195C04320049C593 /* SIActionSheetPopoverController.m */,
-			);
-			name = SIActionSheet;
-			path = ../SIActionSheet;
 			sourceTree = "<group>";
 		};
 		7EC33FE1175205D100CF4BAA /* Icons */ = {
@@ -192,9 +164,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7EC33FD01752051100CF4BAA /* Build configuration list for PBXNativeTarget "SIActionSheetExample" */;
 			buildPhases = (
+				059CC1A8E6F44E009E9AF2F3 /* Check Pods Manifest.lock */,
 				7EC33FA61752051000CF4BAA /* Sources */,
 				7EC33FA71752051000CF4BAA /* Frameworks */,
 				7EC33FA81752051000CF4BAA /* Resources */,
+				BE6B67DCE03241248C95102A /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -251,6 +225,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		059CC1A8E6F44E009E9AF2F3 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		BE6B67DCE03241248C95102A /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Pods-SIActionSheetExample-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		7EC33FA61752051000CF4BAA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -258,12 +265,7 @@
 			files = (
 				7EC33FBA1752051000CF4BAA /* main.m in Sources */,
 				7EC33FBE1752051000CF4BAA /* AppDelegate.m in Sources */,
-				7EA455F2195C04320049C593 /* SIActionSheetPopoverController.m in Sources */,
 				7EC33FCD1752051100CF4BAA /* ViewController.m in Sources */,
-				7EC33FD81752055700CF4BAA /* SIActionSheet.m in Sources */,
-				7E5C34D317B3E4EB009145D4 /* SIPopoverBackgroundView.m in Sources */,
-				7EEECA6C1823521A001FEDF5 /* UIWindow+SIUtils.m in Sources */,
-				7E5D24C618AE0C5500B21A14 /* SISecondaryWindowRootViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -357,6 +359,7 @@
 		};
 		7EC33FD11752051100CF4BAA /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B10944D56814805A80ECCF3 /* Pods-SIActionSheetExample.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SIActionSheetExample/SIActionSheetExample-Prefix.pch";
@@ -369,6 +372,7 @@
 		};
 		7EC33FD21752051100CF4BAA /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B10944D56814805A80ECCF3 /* Pods-SIActionSheetExample.xcconfig */;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "SIActionSheetExample/SIActionSheetExample-Prefix.pch";

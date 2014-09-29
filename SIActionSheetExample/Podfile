@@ -1,0 +1,3 @@
+target 'SIActionSheetExample', :exclusive => true do
+  pod "SIActionSheet", :path => "../"
+end
