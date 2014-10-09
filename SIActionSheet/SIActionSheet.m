@@ -9,7 +9,6 @@
 #import "SIActionSheet.h"
 #import "SIPopoverBackgroundView.h"
 #import "SISecondaryWindowRootViewController.h"
-#import "UIWindow+SIUtils.h"
 #import "SIActionSheetPopoverController.h"
 #import <QuartzCore/QuartzCore.h>
 
