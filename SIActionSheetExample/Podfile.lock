@@ -1,7 +1,7 @@
 PODS:
   - SIActionSheet (1.1):
-    - SIBaseKit (~> 0.1.0)
-  - SIBaseKit (0.1.0)
+    - SISecondaryWindowRootViewController (~> 0.1)
+  - SISecondaryWindowRootViewController (0.1)
 
 DEPENDENCIES:
   - SIActionSheet (from `../`)
@@ -11,7 +11,7 @@ EXTERNAL SOURCES:
     :path: ../
 
 SPEC CHECKSUMS:
-  SIActionSheet: fba458b2516fe89e7b0895ef176a2dc372451888
-  SIBaseKit: 64aa6bbffabfa4788946c45bb0439bd011c6ac8c
+  SIActionSheet: e140ac9084abdda74d2cb55df837458adc39eb35
+  SISecondaryWindowRootViewController: d8f4732019e3e60f903d6a23dddcb2468642943b
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.34.2

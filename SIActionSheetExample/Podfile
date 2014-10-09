@@ -1,3 +1,5 @@
+source 'https://github.com/CocoaPods/Specs.git'
+
 target 'SIActionSheetExample', :exclusive => true do
   pod "SIActionSheet", :path => "../"
 end
