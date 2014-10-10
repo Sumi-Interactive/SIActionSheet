@@ -61,8 +61,11 @@ typedef void(^SIActionSheetDismissHandler)(SIActionSheet *actionSheet, NSInteger
 - (void)addButtonWithAttributedTitle:(NSAttributedString *)attributedTitle type:(SIActionSheetButtonType)type handler:(SIActionSheetHandler)handler;
 
 - (void)show;
-- (void)showFromRect:(CGRect)rect inView:(UIView *)view;
-- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem;
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view NS_DEPRECATED_IOS(5_0,8_0, "Use showFromRect:inView:context instead");
+- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem NS_DEPRECATED_IOS(5_0,8_0, "Use showFromBarButtonItem:inContext instead");
 - (void)dismissWithButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated; // (buttonIndex == -1) means no button is clicked.
+
+- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem inContext:(UIViewController *)context NS_AVAILABLE_IOS(8_0);
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view context:(UIViewController *)context NS_AVAILABLE_IOS(8_0);
 
 @end

@@ -11,6 +11,10 @@
 #import "SISecondaryWindowRootViewController.h"
 #import "SIActionSheetPopoverController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "SIPropertyEnforcer.h"
+
+
+#define IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 
 #define ROW_HEIGHT 50
 #define HORIZONTAL_PADDING 20
@@ -25,7 +29,7 @@ NSString *const SIActionSheetDidDismissNotification = @"SIActionSheetDidDismissN
 
 NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIActionSheetDismissNotificationUserInfoButtonIndexKey";
 
-@interface SIActionSheet () <UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate>
+@interface SIActionSheet () <UITableViewDataSource, UITableViewDelegate, UIPopoverControllerDelegate, UIPopoverPresentationControllerDelegate>
 
 @property (nonatomic, strong) NSMutableArray *items;
 @property (nonatomic, strong) UIView *backgroundView;
@@ -36,6 +40,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 @property (nonatomic, strong) UIWindow *actionsheetWindow;
 @property (nonatomic, strong) UIPopoverController *popoverController;
+@property (nonatomic, strong) UIViewController *popoverPresentionViewController;
 
 - (CGFloat)preferredHeight;
 
@@ -203,7 +208,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (BOOL)isVisible
 {
-    if (self.actionsheetWindow || self.popoverController) {
+    if (self.actionsheetWindow || self.popoverController || self.popoverPresentionViewController) {
         return YES;
     }
     return NO;
@@ -352,6 +357,71 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidShowNotification object:self userInfo:nil];
 }
 
+- (void)showFromBarButtonItem:(UIBarButtonItem *)barButtonItem inContext:(UIViewController *)context
+{
+    if (self.isVisible) {
+        return;
+    }
+    
+    if (self.willShowHandler) {
+        self.willShowHandler(self);
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillShowNotification object:self userInfo:nil];
+    
+    [self tweakUIForPopover];
+    
+    UIViewController *viewController = [self actionSheetViewController];
+    viewController.modalPresentationStyle = UIModalPresentationPopover;
+    UIPopoverPresentationController *popoverController = viewController.popoverPresentationController;
+    popoverController.barButtonItem = barButtonItem;
+    popoverController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    popoverController.delegate = self;
+    
+    [SIPropertyEnforcer enforceProperty:@"passthroughViews" ofObject:popoverController toValue:nil];
+    
+    [context presentViewController:viewController animated:YES completion:^{
+        if (self.didShowHandler) {
+            self.didShowHandler(self);
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidShowNotification object:self userInfo:nil];
+    }];
+    self.popoverPresentionViewController = viewController;
+    
+}
+
+- (void)showFromRect:(CGRect)rect inView:(UIView *)view context:(UIViewController *)context
+{
+    if (self.isVisible) {
+        return;
+    }
+    
+    if (self.willShowHandler) {
+        self.willShowHandler(self);
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillShowNotification object:self userInfo:nil];
+    
+    
+    [self tweakUIForPopover];
+    
+    UIViewController *viewController = [self actionSheetViewController];
+    viewController.modalPresentationStyle = UIModalPresentationPopover;
+    UIPopoverPresentationController *popoverController = viewController.popoverPresentationController;
+    popoverController.sourceRect = rect;
+    popoverController.sourceView = view;
+    popoverController.permittedArrowDirections = UIPopoverArrowDirectionAny;
+    popoverController.delegate = self;
+    
+    [SIPropertyEnforcer enforceProperty:@"passthroughViews" ofObject:popoverController toValue:nil];
+    
+    [context presentViewController:viewController animated:YES completion:^{
+        if (self.didShowHandler) {
+            self.didShowHandler(self);
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidShowNotification object:self userInfo:nil];
+    }];
+    self.popoverPresentionViewController = viewController;
+}
+
 - (void)dismissWithButtonIndex:(NSInteger)buttonIndex animated:(BOOL)animated
 {
     [self dismissWithButtonIndex:buttonIndex animated:animated notifyDelegate:NO];
@@ -414,10 +484,14 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
         }
         
     } else {
-        if (self.popoverController) {
-            self.popoverController.contentViewController.view.layer.allowsGroupOpacity = YES;
-            [self.popoverController dismissPopoverAnimated:animated];
-            self.popoverController = nil;
+        if (self.popoverPresentionViewController) {
+            [self.popoverPresentionViewController dismissViewControllerAnimated:YES completion:nil];
+        } else {
+            if (self.popoverController) {
+                self.popoverController.contentViewController.view.layer.allowsGroupOpacity = YES;
+                [self.popoverController dismissPopoverAnimated:animated];
+                self.popoverController = nil;
+            }
         }
         
         if (notifyFlag) {
@@ -501,15 +575,18 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
 
 - (void)setupPopoverController
 {
-    [[SIPopoverBackgroundView appearance] setTintColor:self.viewBackgroundColor];
-    
     SIActionSheetViewController *viewController = [self actionSheetViewController];
     self.popoverController = [[SIActionSheetPopoverController alloc] initWithContentViewController:viewController];
     self.popoverController.delegate = self;
     self.popoverController.backgroundColor = [UIColor whiteColor];
-    //    self.popoverController.popoverBackgroundViewClass = [SIPopoverBackgroundView class];
+
+    [self tweakUIForPopover];
+}
+
+- (void)tweakUIForPopover
+{
+    [[SIPopoverBackgroundView appearance] setTintColor:self.viewBackgroundColor];
     
-    // tweak ui for popover
     self.backgroundView.hidden = YES;
     self.containerView.layer.cornerRadius = [[SIPopoverBackgroundView appearance] cornerRadius];
     self.containerView.layer.shadowOpacity = 0;
@@ -593,7 +670,6 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     return cell;
 }
 
-#define IOS_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // this is a fix for separatorInset = UIEdgeInsetsZero does not take effect on iOS 8
@@ -622,6 +698,29 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     }
     
     [self dismissWithButtonIndex:indexPath.row animated:YES notifyDelegate:YES];
+}
+
+#pragma mark - UIPopoverPresentationControllerDelegate
+
+- (BOOL)popoverPresentationControllerShouldDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
+{
+    if (self.allowTapBackgroundToDismiss) {
+        NSDictionary *userInfo = @{SIActionSheetDismissNotificationUserInfoButtonIndexKey : @(-1)};
+        if (self.willDismissHandler) {
+            self.willDismissHandler(self, -1);
+        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetWillDismissNotification object:self userInfo:userInfo];
+    }
+    return self.allowTapBackgroundToDismiss;
+}
+
+- (void)popoverPresentationControllerDidDismissPopover:(UIPopoverPresentationController *)popoverPresentationController
+{
+    NSDictionary *userInfo = @{SIActionSheetDismissNotificationUserInfoButtonIndexKey : @(-1)};
+    if (self.didDismissHandler) {
+        self.didDismissHandler(self, -1);
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:SIActionSheetDidDismissNotification object:self userInfo:userInfo];
 }
 
 #pragma mark - UIPopoverControllerDelegate
