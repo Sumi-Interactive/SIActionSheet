@@ -371,6 +371,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     [self tweakUIForPopover];
     
     UIViewController *viewController = [self actionSheetViewController];
+    viewController.view.backgroundColor = [UIColor whiteColor];
     viewController.modalPresentationStyle = UIModalPresentationPopover;
     UIPopoverPresentationController *popoverController = viewController.popoverPresentationController;
     popoverController.barButtonItem = barButtonItem;
@@ -404,6 +405,7 @@ NSString *const SIActionSheetDismissNotificationUserInfoButtonIndexKey = @"SIAct
     [self tweakUIForPopover];
     
     UIViewController *viewController = [self actionSheetViewController];
+    viewController.view.backgroundColor = [UIColor whiteColor];
     viewController.modalPresentationStyle = UIModalPresentationPopover;
     UIPopoverPresentationController *popoverController = viewController.popoverPresentationController;
     popoverController.sourceRect = rect;
